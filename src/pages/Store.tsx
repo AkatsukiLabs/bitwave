@@ -1,4 +1,6 @@
 import coinIcon from "@/assets/coin-icon.png";
+import coinBag from "@/assets/coin-bag.png";
+import safeIcon from "@/assets/safe-icon.png";
 import { Button } from "@/components/ui/button";
 
 interface CoinPackage {
@@ -19,13 +21,13 @@ const coinPackages: CoinPackage[] = [
     id: "medium",
     coins: 50,
     price: 100,
-    icon: coinIcon, // In real app, this would be a different icon (coin bag)
+    icon: coinBag,
   },
   {
     id: "large",
     coins: 100,
     price: 200,
-    icon: coinIcon, // In real app, this would be a vault/safe icon
+    icon: safeIcon,
   },
 ];
 
@@ -37,7 +39,7 @@ const Store = () => {
         <p className="text-muted-foreground mb-2">Your balance</p>
         <div className="flex items-center justify-center gap-2">
           <span className="text-3xl font-bold text-foreground">500</span>
-          <div className="w-8 h-8 bg-bitwave-gold rounded-full coin-icon"></div>
+          <img src={coinIcon} alt="Coin" className="w-8 h-8 coin-icon" />
         </div>
       </div>
 
@@ -64,7 +66,7 @@ const Store = () => {
                   <span className="text-xl font-bold text-foreground">
                     {pkg.price}
                   </span>
-                  <div className="w-5 h-5 bg-bitwave-gold rounded-full coin-icon"></div>
+                  <img src={coinIcon} alt="Coin" className="w-5 h-5 coin-icon" />
                 </div>
               </div>
             </div>

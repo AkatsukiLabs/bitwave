@@ -1,22 +1,23 @@
 import coinIcon from "@/assets/coin-icon.png";
+import happyFace from "@/assets/happy-face.png";
 
 const steps = [
   {
     id: 1,
     title: "Insert a coin",
-    icon: "🪙",
+    icon: coinIcon,
     description: "Buy coins to play retro mini-games"
   },
   {
     id: 2,
     title: "Enjoy",
-    icon: "😊",
+    icon: happyFace,
     description: "Play your favorite retro games"
   },
   {
     id: 3,
     title: "Get reward",
-    icon: "💰",
+    icon: coinIcon, // Using coin icon for money/reward
     description: "Earn rewards while playing"
   },
 ];
@@ -33,7 +34,7 @@ const HowItWorks = () => {
       <div className="space-y-8 mb-12">
         {steps.map((step) => (
           <div key={step.id} className="flex items-center gap-4">
-            <div className="text-3xl">{step.icon}</div>
+            <img src={step.icon} alt={step.title} className="w-8 h-8" />
             <div>
               <h3 className="text-foreground font-bold text-lg mb-1">
                 {step.title}

@@ -1,13 +1,14 @@
 import { Button } from "@/components/ui/button";
-import { User } from "lucide-react";
+import userIcon from "@/assets/user-icon.png";
+import starknetLogo from "@/assets/starknet-logo.png";
 
 const Profile = () => {
   return (
     <div className="max-w-md mx-auto">
       {/* Profile Icon */}
       <div className="text-center mb-6">
-        <div className="w-16 h-16 bg-bitwave-orange rounded-full mx-auto mb-4 flex items-center justify-center">
-          <User size={32} className="text-background" />
+        <div className="w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+          <img src={userIcon} alt="Profile" className="w-16 h-16" />
         </div>
       </div>
 
@@ -38,9 +39,12 @@ const Profile = () => {
       {/* Rewards Section */}
       <div className="game-card rounded-lg p-6">
         <div className="flex items-center justify-between">
-          <div>
-            <p className="text-muted-foreground text-sm mb-1">Rewards</p>
-            <p className="text-foreground font-bold text-lg">VESU</p>
+          <div className="flex items-center gap-3">
+            <img src={starknetLogo} alt="Starknet" className="w-8 h-8" />
+            <div>
+              <p className="text-muted-foreground text-sm mb-1">Rewards</p>
+              <p className="text-foreground font-bold text-lg">VESU</p>
+            </div>
           </div>
           <Button
             variant="secondary"

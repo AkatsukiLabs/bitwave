@@ -1,6 +1,10 @@
 import { ReactNode } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Home, Coins, User } from "lucide-react";
+import bitwaveLogo from "@/assets/bitwave-logo.png";
+import coinIcon from "@/assets/coin-icon.png";
+import homeIcon from "@/assets/home-icon.png";
+import userIcon from "@/assets/user-icon.png";
 
 interface LayoutProps {
   children: ReactNode;
@@ -17,12 +21,10 @@ const Layout = ({ children }: LayoutProps) => {
       <header className="flex items-center justify-between p-4 border-b border-border">
         <div className="flex items-center gap-2">
           <span className="text-foreground text-lg font-mono">3</span>
-          <div className="w-8 h-8 bg-bitwave-gold rounded-full coin-icon"></div>
+          <img src={coinIcon} alt="Coin" className="w-8 h-8 coin-icon" />
           <span className="text-bitwave-orange text-xl font-bold">+</span>
         </div>
-        <h1 className="bitwave-logo text-3xl font-black tracking-wider">
-          BITWAVE
-        </h1>
+        <img src={bitwaveLogo} alt="BITWAVE" className="h-8" />
         <div className="w-16"></div> {/* Spacer for centering */}
       </header>
 
@@ -40,7 +42,7 @@ const Layout = ({ children }: LayoutProps) => {
               isActive('/') ? 'text-bitwave-orange' : 'text-muted-foreground'
             }`}
           >
-            <Home size={24} />
+            <img src={homeIcon} alt="Home" className="w-6 h-6" />
           </Link>
           
           <Link 
@@ -49,7 +51,7 @@ const Layout = ({ children }: LayoutProps) => {
               isActive('/store') ? 'text-bitwave-orange' : 'text-muted-foreground'
             }`}
           >
-            <Coins size={24} />
+            <img src={coinIcon} alt="Store" className="w-6 h-6" />
           </Link>
           
           <Link 
@@ -58,7 +60,7 @@ const Layout = ({ children }: LayoutProps) => {
               isActive('/profile') ? 'text-bitwave-orange' : 'text-muted-foreground'
             }`}
           >
-            <User size={24} />
+            <img src={userIcon} alt="Profile" className="w-6 h-6" />
           </Link>
         </div>
       </nav>

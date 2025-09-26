@@ -1,73 +1,110 @@
-# Welcome to your Lovable project
+# 🎮 BITWAVE - Retro Gaming Platform
 
-## Project info
+> **Play. Earn. Repeat.** 💰
 
-**URL**: https://lovable.dev/projects/1f976c97-6ff2-4aab-8737-1746973031fa
+BITWAVE is a retro gaming platform where you can play classic mini-games, earn rewards, and collect tokens. Experience the nostalgia of pixel-perfect gaming with modern blockchain rewards!
 
-## How can I edit this code?
+## ✨ Features
 
-There are several ways of editing your application.
+🕹️ **Retro Mini-Games** - Play classic games like Mario vs Donkey Kong, DOOM, Duck Hunt, and Tetris  
+💎 **Starknet Integration** - Earn and manage tokens on the Starknet blockchain  
+🎁 **VESU Rewards** - Collect rewards while playing your favorite games  
+🌙 **Dark Theme** - Beautiful dark UI with orange/gold accents  
+📱 **Mobile-First** - Optimized for mobile gaming experience  
+🔐 **Social Auth** - Login with Google or Apple  
 
-**Use Lovable**
+## 🎯 How It Works
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/1f976c97-6ff2-4aab-8737-1746973031fa) and start prompting.
+1. **🪙 Insert a coin** - Buy tokens to play retro mini-games
+2. **😊 Enjoy** - Play your favorite retro games  
+3. **💸 Get reward** - Earn rewards while playing
 
-Changes made via Lovable will be committed automatically to this repo.
+While you play, your tokens generate yield. When you're out of tokens, buy more and keep earning!
 
-**Use your preferred IDE**
+## 🛠️ Tech Stack
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+- ⚡ **Vite** - Lightning fast build tool
+- 🔷 **TypeScript** - Type-safe development
+- ⚛️ **React** - Modern UI framework
+- 🎨 **Tailwind CSS** - Utility-first styling
+- 🧩 **shadcn/ui** - Beautiful component library
+- 🌐 **React Router** - Client-side routing
+- 📱 **Mobile-Responsive** - Perfect on all devices
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+## 🚀 Getting Started
 
-Follow these steps:
+### Prerequisites
+- Node.js 18+ 
+- npm or pnpm
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
+### Installation
+
+```bash
+# Clone the repository
 git clone <YOUR_GIT_URL>
+cd bitwave
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+# Install dependencies
+npm install
 
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Start development server
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+### Available Scripts
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+```bash
+npm run dev        # 🔥 Start development server
+npm run build      # 📦 Build for production
+npm run preview    # 👀 Preview production build
+npm run lint       # 🔍 Lint code
+```
 
-**Use GitHub Codespaces**
+## 📱 Pages & Features
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+### 🏠 Home
+- Grid of retro game cards
+- Quick access to "How it works"
 
-## What technologies are used for this project?
+### 🛒 Store  
+- Buy token packages with Starknet
+- Multiple coin pack options
+- Real-time balance display
 
-This project is built with:
+### 👤 Profile
+- Wallet information display
+- VESU rewards claiming
+- Deposit/Withdraw functions
+- Logout functionality
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+### 🔐 Authentication
+- Clean, minimalist login page
+- Google & Apple OAuth integration
+- Mobile-optimized design
 
-## How can I deploy this project?
+### ❓ How It Works
+- Simple 3-step explanation
+- Visual icons for each step
+- Additional game information
 
-Simply open [Lovable](https://lovable.dev/projects/1f976c97-6ff2-4aab-8737-1746973031fa) and click on Share -> Publish.
+## 🤝 Development
 
-## Can I connect a custom domain to my Lovable project?
+### Project Structure
+```
+src/
+├── components/     # Reusable UI components
+├── pages/         # Application pages
+├── assets/        # Images and static files
+├── hooks/         # Custom React hooks
+└── lib/           # Utility functions
+```
 
-Yes, you can!
+### Contributing
+1. 🍴 Fork the repository
+2. 🌿 Create a feature branch
+3. 💫 Make your changes  
+4. 🚀 Submit a pull request
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+---
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+🎮 **Start playing and earning today!** 💰

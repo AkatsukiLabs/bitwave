@@ -47,6 +47,13 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        // BITWAVE custom colors
+        bitwave: {
+          orange: "hsl(var(--bitwave-orange))",
+          gold: "hsl(var(--bitwave-gold))",
+          dark: "hsl(var(--bitwave-dark))",
+          card: "hsl(var(--bitwave-card))",
+        },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",

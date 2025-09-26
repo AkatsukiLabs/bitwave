@@ -2,41 +2,59 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
+/* BITWAVE Retro Gaming App Design System
+   Dark theme with orange/gold accents and retro aesthetics
 */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Dark theme base colors */
+    --background: 220 12% 10%;
+    --foreground: 0 0% 95%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 220 14% 12%;
+    --card-foreground: 0 0% 95%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 220 14% 12%;
+    --popover-foreground: 0 0% 95%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Orange/gold primary colors for BITWAVE brand */
+    --primary: 35 100% 60%;
+    --primary-foreground: 220 12% 10%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Darker secondary for subtle elements */
+    --secondary: 220 10% 16%;
+    --secondary-foreground: 0 0% 80%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 220 10% 16%;
+    --muted-foreground: 0 0% 60%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    /* Golden accent for highlights */
+    --accent: 45 100% 65%;
+    --accent-foreground: 220 12% 10%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 95%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 220 8% 20%;
+    --input: 220 8% 20%;
+    --ring: 35 100% 60%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
+
+    /* Custom BITWAVE colors */
+    --bitwave-orange: 25 100% 60%;
+    --bitwave-gold: 45 95% 65%;
+    --bitwave-dark: 220 15% 8%;
+    --bitwave-card: 220 12% 14%;
+    
+    /* Gradients */
+    --gradient-bitwave: linear-gradient(135deg, hsl(var(--bitwave-orange)), hsl(var(--bitwave-gold)));
+    --gradient-card: linear-gradient(145deg, hsl(var(--bitwave-card)), hsl(220 8% 16%));
+    
+    /* Animations */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --glow-orange: 0 0 20px hsl(var(--bitwave-orange) / 0.3);
 
     --sidebar-background: 0 0% 98%;
 
@@ -100,6 +118,45 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-mono;
+  }
+}
+
+@layer components {
+  /* BITWAVE custom components */
+  .bitwave-logo {
+    background: var(--gradient-bitwave);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 900;
+    font-family: 'Impact', 'Arial Black', sans-serif;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  
+  .game-card {
+    background: var(--gradient-card);
+    border: 1px solid hsl(var(--border));
+    transition: var(--transition-smooth);
+  }
+  
+  .game-card:hover {
+    transform: translateY(-2px);
+    border-color: hsl(var(--bitwave-orange));
+    box-shadow: var(--glow-orange);
+  }
+  
+  .coin-icon {
+    filter: drop-shadow(0 2px 4px hsl(var(--bitwave-orange) / 0.3));
+  }
+  
+  .nav-icon {
+    transition: var(--transition-smooth);
+  }
+  
+  .nav-icon:hover, .nav-icon.active {
+    color: hsl(var(--bitwave-orange));
+    filter: drop-shadow(0 0 8px hsl(var(--bitwave-orange) / 0.5));
   }
 }

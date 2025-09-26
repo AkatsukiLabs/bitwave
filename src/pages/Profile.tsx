@@ -1,15 +1,29 @@
 import { Button } from "@/components/ui/button";
+import { LogOut } from "lucide-react";
+import { Link } from "react-router-dom";
 import userIcon from "@/assets/user-icon.png";
-import starknetLogo from "@/assets/starknet-logo.png";
+import vesuIcon from "@/assets/vesu.png";
 
 const Profile = () => {
   return (
     <div className="max-w-md mx-auto">
-      {/* Profile Icon */}
-      <div className="text-center mb-6">
-        <div className="w-16 h-16 mx-auto mb-4 flex items-center justify-center">
-          <img src={userIcon} alt="Profile" className="w-16 h-16" />
+      {/* Profile Header with Logout */}
+      <div className="flex items-center justify-between mb-6">
+        <div></div>
+        <div className="text-center">
+          <div className="w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+            <img src={userIcon} alt="Profile" className="w-16 h-16" />
+          </div>
         </div>
+        <Link to="/auth">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-muted-foreground hover:text-bitwave-orange"
+          >
+            <LogOut className="h-5 w-5" />
+          </Button>
+        </Link>
       </div>
 
       {/* Wallet Info */}
@@ -29,8 +43,8 @@ const Profile = () => {
           DEPOSIT +
         </Button>
         <Button
-          variant="bitwave"
-          className="flex-1"
+          variant="outline"
+          className="flex-1 border-bitwave-orange text-bitwave-orange hover:bg-bitwave-orange hover:text-background"
         >
           WITHDRAW -
         </Button>
@@ -38,17 +52,13 @@ const Profile = () => {
 
       {/* Rewards Section */}
       <div className="game-card rounded-lg p-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <img src={starknetLogo} alt="Starknet" className="w-8 h-8" />
-            <div>
-              <p className="text-muted-foreground text-sm mb-1">Rewards</p>
-              <p className="text-foreground font-bold text-lg">VESU</p>
-            </div>
+        <div className="flex items-start justify-between">
+          <div>
+            <p className="text-muted-foreground text-sm mb-3">Rewards</p>
+            <img src={vesuIcon} alt="VESU" />
           </div>
           <Button
-            variant="secondary"
-            className="bg-secondary hover:bg-secondary/80 text-secondary-foreground font-bold px-8"
+            className="bg-white hover:bg-gray-50 text-black font-bold px-8 mt-2"
           >
             CLAIM
           </Button>

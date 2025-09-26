@@ -1,6 +1,7 @@
 import coinIcon from "@/assets/coin-icon.png";
 import coinBag from "@/assets/coin-bag.png";
 import safeIcon from "@/assets/safe-icon.png";
+import starknetLogo from "@/assets/starknet-logo.png";
 import { Button } from "@/components/ui/button";
 
 interface CoinPackage {
@@ -39,7 +40,7 @@ const Store = () => {
         <p className="text-muted-foreground mb-2">Your balance</p>
         <div className="flex items-center justify-center gap-2">
           <span className="text-3xl font-bold text-foreground">500</span>
-          <img src={coinIcon} alt="Coin" className="w-8 h-8 coin-icon" />
+          <img src={starknetLogo} alt="Starknet" className="w-8 h-8" />
         </div>
       </div>
 
@@ -66,7 +67,7 @@ const Store = () => {
                   <span className="text-xl font-bold text-foreground">
                     {pkg.price}
                   </span>
-                  <img src={coinIcon} alt="Coin" className="w-5 h-5 coin-icon" />
+                  <img src={starknetLogo} alt="Starknet" className="w-5 h-5" />
                 </div>
               </div>
             </div>

@@ -9,6 +9,7 @@ import Store from "./pages/Store";
 import Profile from "./pages/Profile";
 import HowItWorks from "./pages/HowItWorks";
 import Auth from "./pages/Auth";
+import DuckHunt from "./pages/DuckHunt";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -22,7 +23,10 @@ const App = () => (
         <Routes>
           {/* Auth route without Layout */}
           <Route path="/auth" element={<Auth />} />
-          
+
+          {/* Duck Hunt game route without Layout (fullscreen) */}
+          <Route path="/duck-hunt" element={<DuckHunt />} />
+
           {/* Main app routes with Layout */}
           <Route path="/*" element={
             <Layout>

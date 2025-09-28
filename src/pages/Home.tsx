@@ -41,6 +41,12 @@ const games: Game[] = [
 ];
 
 const Home = () => {
+  const handleGameClick = (gameId: string) => {
+    if (gameId === "duck-hunt") {
+      window.location.href = "/duck-hunt";
+    }
+  };
+
   return (
     <div className="max-w-md mx-auto">
       <div className="grid grid-cols-2 gap-4 mb-6">
@@ -48,6 +54,7 @@ const Home = () => {
           <div
             key={game.id}
             className="game-card rounded-lg p-4 cursor-pointer"
+            onClick={() => handleGameClick(game.id)}
           >
             <div className="aspect-square rounded-md overflow-hidden mb-3">
               <img

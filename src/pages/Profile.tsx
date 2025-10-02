@@ -1,10 +1,18 @@
 import { Button } from "@/components/ui/button";
 import { LogOut } from "lucide-react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import userIcon from "@/assets/user-icon.png";
 import vesuIcon from "@/assets/vesu.png";
 
 const Profile = () => {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    // Clear authentication token
+    localStorage.removeItem("bitwave_auth_token");
+    // Redirect to login
+    navigate("/auth");
+  };
   return (
     <div className="max-w-md mx-auto">
       {/* Profile Header with Logout */}
@@ -15,15 +23,14 @@ const Profile = () => {
             <img src={userIcon} alt="Profile" className="w-16 h-16" />
           </div>
         </div>
-        <Link to="/auth">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="text-muted-foreground hover:text-bitwave-orange"
-          >
-            <LogOut className="h-5 w-5" />
-          </Button>
-        </Link>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="text-muted-foreground hover:text-bitwave-orange"
+          onClick={handleLogout}
+        >
+          <LogOut className="h-5 w-5" />
+        </Button>
       </div>
 
       {/* Wallet Info */}
@@ -57,9 +64,7 @@ const Profile = () => {
             <p className="text-muted-foreground text-sm mb-3">Rewards</p>
             <img src={vesuIcon} alt="VESU" />
           </div>
-          <Button
-            className="bg-white hover:bg-gray-50 text-black font-bold px-8 mt-2"
-          >
+          <Button className="bg-white hover:bg-gray-50 text-black font-bold px-8 mt-2">
             CLAIM
           </Button>
         </div>

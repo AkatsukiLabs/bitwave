@@ -66,17 +66,18 @@ const Home = () => {
             <h3 className="text-foreground font-bold text-sm mb-1 leading-tight">
               {game.title}
             </h3>
-            <p className="text-muted-foreground text-xs">
-              {game.year}
-            </p>
+            <p className="text-muted-foreground text-xs">{game.year}</p>
           </div>
         ))}
       </div>
-      
+
       {/* How it works link */}
       <div className="text-center">
         <Link to="/how-it-works">
-          <Button variant="ghost" className="text-muted-foreground hover:text-bitwave-orange">
+          <Button
+            variant="ghost"
+            className="text-muted-foreground hover:text-bitwave-orange"
+          >
             <HelpCircle size={16} />
             How it works?
           </Button>

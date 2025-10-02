@@ -47,11 +47,19 @@
     --bitwave-gold: 45 95% 65%;
     --bitwave-dark: 220 15% 8%;
     --bitwave-card: 220 12% 14%;
-    
+
     /* Gradients */
-    --gradient-bitwave: linear-gradient(135deg, hsl(var(--bitwave-orange)), hsl(var(--bitwave-gold)));
-    --gradient-card: linear-gradient(145deg, hsl(var(--bitwave-card)), hsl(220 8% 16%));
-    
+    --gradient-bitwave: linear-gradient(
+      135deg,
+      hsl(var(--bitwave-orange)),
+      hsl(var(--bitwave-gold))
+    );
+    --gradient-card: linear-gradient(
+      145deg,
+      hsl(var(--bitwave-card)),
+      hsl(220 8% 16%)
+    );
+
     /* Animations */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     --glow-orange: 0 0 20px hsl(var(--bitwave-orange) / 0.3);
@@ -130,32 +138,33 @@
     background-clip: text;
     -webkit-text-fill-color: transparent;
     font-weight: 900;
-    font-family: 'Impact', 'Arial Black', sans-serif;
+    font-family: "Impact", "Arial Black", sans-serif;
     letter-spacing: 0.1em;
     text-transform: uppercase;
   }
-  
+
   .game-card {
     background: var(--gradient-card);
     border: 1px solid hsl(var(--border));
     transition: var(--transition-smooth);
   }
-  
+
   .game-card:hover {
     transform: translateY(-2px);
     border-color: hsl(var(--bitwave-orange));
     box-shadow: var(--glow-orange);
   }
-  
+
   .coin-icon {
     filter: drop-shadow(0 2px 4px hsl(var(--bitwave-orange) / 0.3));
   }
-  
+
   .nav-icon {
     transition: var(--transition-smooth);
   }
-  
-  .nav-icon:hover, .nav-icon.active {
+
+  .nav-icon:hover,
+  .nav-icon.active {
     color: hsl(var(--bitwave-orange));
     filter: drop-shadow(0 0 8px hsl(var(--bitwave-orange) / 0.5));
   }

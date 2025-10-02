@@ -8,22 +8,34 @@ const Auth = () => {
   const handleGoogleAuth = () => {
     // Mock Google auth - in real app, implement OAuth
     console.log("Google auth triggered");
-    // Simulate successful auth
-    navigate("/");
+    // Simulate successful auth by storing token
+    localStorage.setItem(
+      "bitwave_auth_token",
+      "google_auth_token_" + Date.now()
+    );
+    navigate("/home");
   };
 
   const handleAppleAuth = () => {
     // Mock Apple auth - in real app, implement OAuth
     console.log("Apple auth triggered");
-    // Simulate successful auth
-    navigate("/");
+    // Simulate successful auth by storing token
+    localStorage.setItem(
+      "bitwave_auth_token",
+      "apple_auth_token_" + Date.now()
+    );
+    navigate("/home");
   };
 
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
       {/* Logo */}
       <div className="flex-1 flex items-center justify-center mb-16">
-        <img src={bitwaveLogo} alt="BITWAVE" className="h-32" />
+        <img
+          src={bitwaveLogo}
+          alt="BITWAVE"
+          className="w-[500px] h-[180px] object-contain"
+        />
       </div>
 
       {/* Auth Buttons */}

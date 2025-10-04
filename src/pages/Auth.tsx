@@ -1,8 +1,12 @@
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Loader2 } from "lucide-react";
+import { useAegisAuth } from "@/hooks/useAegisAuth";
+import { toast } from "sonner";
 import bitwaveLogo from "@/assets/bitwave-logo.png";
 
 const Auth = () => {
@@ -10,46 +14,103 @@ const Auth = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLogin, setIsLogin] = useState(true);
+  
+  const {
+    isLoading,
+    error,
+    isWalletConnected,
+    sdkInitialized,
+    loginWithEmail,
+    signUpWithEmail,
+    loginWithGoogle,
+    loginWithApple,
+    loadSavedWallet,
+    clearError,
+  } = useAegisAuth();
 
-  const handleGoogleAuth = () => {
-    // Mock Google auth - in real app, implement OAuth
-    console.log("Google auth triggered");
-    // Simulate successful auth by storing token
-    localStorage.setItem(
-      "bitwave_auth_token",
-      "google_auth_token_" + Date.now()
-    );
-    navigate("/home");
+  // Cargar wallet guardada al montar el componente (solo una vez)
+  useEffect(() => {
+    const initAuth = async () => {
+      try {
+        const hasWallet = await loadSavedWallet();
+        if (hasWallet && isWalletConnected) {
+          // Si ya hay una wallet conectada, ir directamente al home
+          localStorage.setItem("bitwave_auth_token", "wallet_connected_" + Date.now());
+          navigate("/home");
+        }
+      } catch (err) {
+        console.error('Error initializing auth:', err);
+      }
+    };
+    
+    // Solo ejecutar una vez al montar el componente
+    initAuth();
+  }, []); // Array vacío para ejecutar solo una vez
+
+  const handleGoogleAuth = async () => {
+    try {
+      clearError();
+      await loginWithGoogle();
+      localStorage.setItem("bitwave_auth_token", "google_auth_token_" + Date.now());
+      navigate("/home");
+    } catch (err) {
+      console.error("Google auth failed:", err);
+    }
   };
 
-  const handleAppleAuth = () => {
-    // Mock Apple auth - in real app, implement OAuth
-    console.log("Apple auth triggered");
-    // Simulate successful auth by storing token
-    localStorage.setItem(
-      "bitwave_auth_token",
-      "apple_auth_token_" + Date.now()
-    );
-    navigate("/home");
+  const handleAppleAuth = async () => {
+    try {
+      clearError();
+      await loginWithApple();
+      localStorage.setItem("bitwave_auth_token", "apple_auth_token_" + Date.now());
+      navigate("/home");
+    } catch (err) {
+      console.error("Apple auth failed:", err);
+    }
   };
 
-  const handleEmailAuth = (e: React.FormEvent) => {
+  const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Mock email/password auth - in real app, implement proper authentication
-    console.log("Email auth triggered", { email, password, isLogin });
-
+    
     if (!email || !password) {
       alert("Please fill in all fields");
       return;
     }
 
-    // Simulate successful auth by storing token
-    localStorage.setItem(
-      "bitwave_auth_token",
-      `email_auth_token_${isLogin ? "login" : "signup"}_${Date.now()}`
-    );
-    navigate("/home");
+    try {
+      clearError();
+      
+      if (isLogin) {
+        await loginWithEmail(email, password);
+        localStorage.setItem(
+          "bitwave_auth_token",
+          `email_auth_token_login_${Date.now()}`
+        );
+      } else {
+        // Registro
+        await signUpWithEmail(email, password);
+        localStorage.setItem(
+          "bitwave_auth_token",
+          `email_auth_token_signup_${Date.now()}`
+        );
+        
+        // Mostrar mensaje de éxito para registro
+        toast.success("¡Registro exitoso!", {
+          description: "Tu cuenta ha sido creada. Ahora puedes iniciar sesión.",
+          duration: 4000,
+        });
+        
+        // Cambiar a modo login automáticamente
+        setIsLogin(true);
+        return; // No navegar inmediatamente, dejar que el usuario haga login
+      }
+      
+      navigate("/home");
+    } catch (err) {
+      console.error("Email auth failed:", err);
+    }
   };
+
 
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
@@ -61,6 +122,26 @@ const Auth = () => {
           className="w-[500px] h-[180px] object-contain"
         />
       </div>
+
+      {/* Error Alert */}
+      {error && (
+        <div className="w-full max-w-xs mb-4">
+          <Alert variant="destructive">
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        </div>
+      )}
+
+      {/* SDK Initialization Alert */}
+      {!sdkInitialized && (
+        <div className="w-full max-w-xs mb-4">
+          <Alert>
+            <AlertDescription>
+              Inicializando SDK de Aegis... Si este mensaje persiste, verifica tu configuración.
+            </AlertDescription>
+          </Alert>
+        </div>
+      )}
 
       {/* Auth Form */}
       <div className="w-full max-w-xs space-y-6 mb-8">
@@ -124,9 +205,17 @@ const Auth = () => {
 
           <Button
             type="submit"
-            className="w-full h-12 bg-bitwave-orange hover:bg-bitwave-gold text-black font-medium rounded-lg transition-colors"
+            disabled={isLoading || !sdkInitialized}
+            className="w-full h-12 bg-bitwave-orange hover:bg-bitwave-gold text-black font-medium rounded-lg transition-colors disabled:opacity-50"
           >
-            {isLogin ? "Login" : "Sign Up"}
+            {isLoading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                {isLogin ? "Logging in..." : "Signing up..."}
+              </>
+            ) : (
+              isLogin ? "Login" : "Sign Up"
+            )}
           </Button>
         </form>
 
@@ -146,7 +235,8 @@ const Auth = () => {
         <div className="space-y-3">
           <Button
             onClick={handleGoogleAuth}
-            className="w-full h-12 bg-white hover:bg-gray-50 text-black font-medium rounded-lg border border-gray-200 transition-colors"
+            disabled={isLoading || !sdkInitialized}
+            className="w-full h-12 bg-white hover:bg-gray-50 text-black font-medium rounded-lg border border-gray-200 transition-colors disabled:opacity-50"
           >
             <svg className="mr-3 h-5 w-5" viewBox="0 0 24 24">
               <path
@@ -171,7 +261,8 @@ const Auth = () => {
 
           <Button
             onClick={handleAppleAuth}
-            className="w-full h-12 bg-black hover:bg-gray-800 text-white font-medium rounded-lg transition-colors"
+            disabled={isLoading || !sdkInitialized}
+            className="w-full h-12 bg-black hover:bg-gray-800 text-white font-medium rounded-lg transition-colors disabled:opacity-50"
           >
             <svg className="mr-3 h-5 w-5" viewBox="0 0 24 24">
               <path
@@ -181,6 +272,7 @@ const Auth = () => {
             </svg>
             Continue with Apple
           </Button>
+
         </div>
       </div>
     </div>

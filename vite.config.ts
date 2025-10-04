@@ -15,4 +15,18 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  define: {
+    // Define process.env for browser compatibility
+    'process.env': 'import.meta.env',
+    global: 'globalThis',
+    'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
+  },
+  optimizeDeps: {
+    include: ['@cavos/aegis'],
+  },
+  build: {
+    rollupOptions: {
+      external: [],
+    },
+  },
 }));

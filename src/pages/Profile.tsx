@@ -1,17 +1,53 @@
 import { Button } from "@/components/ui/button";
-import { LogOut } from "lucide-react";
+import { LogOut, Copy, ExternalLink } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useAegisAuth } from "@/hooks/useAegisAuth";
+import { toast } from "sonner";
 import userIcon from "@/assets/user-icon.png";
 import vesuIcon from "@/assets/vesu.png";
 
 const Profile = () => {
   const navigate = useNavigate();
+  const { isWalletConnected, logout, aegisAccount } = useAegisAuth();
 
-  const handleLogout = () => {
-    // Clear authentication token
-    localStorage.removeItem("bitwave_auth_token");
-    // Redirect to login
-    navigate("/auth");
+  // Obtener información de la wallet desde el SDK
+  const walletAddress = aegisAccount?.address || "Not connected";
+  const walletBalance = "0.0"; // Placeholder - en una implementación real cargarías el balance aquí
+
+  // Log de información de la wallet
+  console.log('=== PROFILE WALLET INFO ===');
+  console.log('Is wallet connected:', isWalletConnected);
+  console.log('Wallet address:', walletAddress);
+  console.log('Aegis account:', aegisAccount);
+  console.log('===========================');
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      // Clear authentication token
+      localStorage.removeItem("bitwave_auth_token");
+      // Redirect to login
+      navigate("/auth");
+    } catch (error) {
+      console.error('Logout error:', error);
+      // Fallback: clear token and redirect
+      localStorage.removeItem("bitwave_auth_token");
+      navigate("/auth");
+    }
+  };
+
+  const handleCopyAddress = () => {
+    if (walletAddress && walletAddress !== "Not connected" && walletAddress !== "Not available") {
+      navigator.clipboard.writeText(walletAddress);
+      toast.success("Address copied to clipboard!");
+    }
+  };
+
+  const handleViewOnExplorer = () => {
+    if (walletAddress && walletAddress !== "Not connected" && walletAddress !== "Not available") {
+      const explorerUrl = `https://sepolia.starkscan.co/contract/${walletAddress}`;
+      window.open(explorerUrl, '_blank');
+    }
   };
   return (
     <div className="max-w-md mx-auto">
@@ -36,8 +72,36 @@ const Profile = () => {
       {/* Wallet Info */}
       <div className="text-center mb-8">
         <p className="text-muted-foreground mb-2">Your Wallet</p>
-        <p className="text-xl font-mono text-foreground tracking-wider">
-          0x058...864f
+        <div className="bg-muted rounded-lg p-4 mb-3">
+          <p className="text-sm font-mono text-foreground break-all">
+            {walletAddress === "Not connected" || walletAddress === "Not available" 
+              ? walletAddress 
+              : `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}`
+            }
+          </p>
+          {walletAddress !== "Not connected" && walletAddress !== "Not available" && (
+            <div className="flex justify-center gap-2 mt-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleCopyAddress}
+                className="text-muted-foreground hover:text-bitwave-orange"
+              >
+                <Copy className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleViewOnExplorer}
+                className="text-muted-foreground hover:text-bitwave-orange"
+              >
+                <ExternalLink className="h-4 w-4" />
+              </Button>
+            </div>
+          )}
+        </div>
+        <p className="text-sm text-muted-foreground">
+          Balance: {walletBalance} ETH
         </p>
       </div>
 

@@ -11,6 +11,7 @@ import Profile from "./pages/Profile";
 import HowItWorks from "./pages/HowItWorks";
 import Auth from "./pages/Auth";
 import DuckHunt from "./pages/DuckHunt";
+import Snake from "./pages/Snake";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -25,6 +26,7 @@ const App = () => (
           {/* Public routes without authentication */}
           <Route path="/auth" element={<Auth />} />
           <Route path="/duck-hunt" element={<DuckHunt />} />
+          <Route path="/snake" element={<Snake />} />
 
           {/* Root route - redirect to auth if not authenticated */}
           <Route

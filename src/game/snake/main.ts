@@ -385,26 +385,42 @@ export function startGame(container: HTMLElement, options: GameOptions = {}) {
       ]);
 
       backArrow.onClick(() => {
-        // Show loading overlay with black background
-        k.add([
-          k.rect(k.width(), k.height()),
-          k.pos(0, 0),
-          k.color(0, 0, 0),
-          k.z(1000),
-          k.fixed(),
-        ]);
+        // Create DOM overlay to cover everything (including KAPLAY canvas)
+        const overlay = document.createElement('div');
+        overlay.style.position = 'fixed';
+        overlay.style.top = '0';
+        overlay.style.left = '0';
+        overlay.style.width = '100vw';
+        overlay.style.height = '100vh';
+        overlay.style.background = '#000';
+        overlay.style.display = 'flex';
+        overlay.style.alignItems = 'center';
+        overlay.style.justifyContent = 'center';
+        overlay.style.zIndex = '9999';
 
-        // Add loading text
-        k.add([
-          k.text("Returning to home...", { font: "arcade", size: 10 }),
-          k.anchor("center"),
-          k.pos(k.center().x, k.center().y),
-          k.color(k.Color.fromHex(COLORS.TEXT)),
-          k.z(1001),
-          k.fixed(),
-        ]);
+        // Create spinner
+        const spinner = document.createElement('div');
+        spinner.style.width = '50px';
+        spinner.style.height = '50px';
+        spinner.style.border = '5px solid #333';
+        spinner.style.borderTop = '5px solid #4ade80';
+        spinner.style.borderRadius = '50%';
+        spinner.style.animation = 'spin 1s linear infinite';
 
-        // Use setTimeout instead of k.wait to ensure it runs even after quit
+        // Add keyframes for spinner animation
+        const style = document.createElement('style');
+        style.textContent = `
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+        `;
+        document.head.appendChild(style);
+
+        overlay.appendChild(spinner);
+        document.body.appendChild(overlay);
+
+        // Use setTimeout to ensure it runs even after quit
         setTimeout(() => {
           if (gameInstance && gameInstance !== 'INITIALIZING') {
             try {
@@ -416,7 +432,7 @@ export function startGame(container: HTMLElement, options: GameOptions = {}) {
             }
           }
           window.location.href = "/home";
-        }, 200);
+        }, 300);
       });
 
       k.add([

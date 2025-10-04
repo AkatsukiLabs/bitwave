@@ -1,6 +1,6 @@
-import marioDonkeyKong from "@/assets/mario-donkey-kong.jpg";
 import doom from "@/assets/doom.jpg";
 import duckHunt from "@/assets/duck-hunt.jpg";
+import snakeCover from "@/assets/snake-cover.png";
 import tetris from "@/assets/tetris.jpg";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -15,22 +15,22 @@ interface Game {
 
 const games: Game[] = [
   {
-    id: "mario-donkey-kong",
-    title: "Mario vs Donkey Kong",
+    id: "duck-hunt",
+    title: "Duck Hunt",
     year: "(1998)",
-    image: marioDonkeyKong,
+    image: duckHunt,
+  },
+  {
+    id: "snake",
+    title: "Snake",
+    year: "(1976)",
+    image: snakeCover,
   },
   {
     id: "doom",
     title: "DOOM",
     year: "(1998)",
     image: doom,
-  },
-  {
-    id: "duck-hunt",
-    title: "Duck Hunt",
-    year: "(1998)",
-    image: duckHunt,
   },
   {
     id: "tetris",
@@ -44,6 +44,8 @@ const Home = () => {
   const handleGameClick = (gameId: string) => {
     if (gameId === "duck-hunt") {
       window.location.href = "/duck-hunt";
+    } else if (gameId === "snake") {
+      window.location.href = "/snake";
     }
   };
 

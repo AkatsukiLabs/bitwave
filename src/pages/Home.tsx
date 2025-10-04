@@ -27,10 +27,10 @@ const games: Game[] = [
     image: snakeCover,
   },
   {
-    id: "doom",
-    title: "DOOM",
-    year: "(1998)",
-    image: doom,
+    id: "asteroids",
+    title: "Asteroids",
+    year: "(1979)",
+    image: doom, // TODO: Replace with asteroids cover image
   },
   {
     id: "tetris",
@@ -46,6 +46,8 @@ const Home = () => {
       window.location.href = "/duck-hunt";
     } else if (gameId === "snake") {
       window.location.href = "/snake";
+    } else if (gameId === "asteroids") {
+      window.location.href = "/asteroids";
     }
   };
 

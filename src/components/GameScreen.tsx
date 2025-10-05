@@ -21,7 +21,7 @@ export function GameScreen({ playerName = "Player", gamePath = "duckhunt" }: Gam
       if (gameContainerRef.current) {
         try {
           initializingRef.current = true;
-          const { startGame } = await import(`../game/${gamePath}/main`);
+          const { startGame } = await import(/* @vite-ignore */ `../game/${gamePath}/main`);
           const gameInstance = startGame(gameContainerRef.current, {
             playerName: playerName
           });
@@ -49,7 +49,7 @@ export function GameScreen({ playerName = "Player", gamePath = "duckhunt" }: Gam
       if (gameInstanceRef.current) {
         try {
           console.log('🧹 Cleaning up game instance');
-          import(`../game/${gamePath}/main`).then(({ destroyGame }) => {
+          import(/* @vite-ignore */ `../game/${gamePath}/main`).then(({ destroyGame }) => {
             destroyGame();
           });
           gameInstanceRef.current = null;

@@ -15,6 +15,7 @@ import Auth from "./pages/Auth";
 import AuthCallback from "./pages/AuthCallback";
 import DuckHunt from "./pages/DuckHunt";
 import Snake from "./pages/Snake";
+import DoubleJump from "./pages/DoubleJump";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -52,6 +53,7 @@ const App = () => (
           <Route path="/auth/callback" element={<AuthCallback />} />
           <Route path="/duck-hunt" element={<DuckHunt />} />
           <Route path="/snake" element={<Snake />} />
+          <Route path="/double-jump" element={<DoubleJump />} />
 
           {/* Root route - redirect to auth if not authenticated */}
           <Route

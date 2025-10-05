@@ -2,6 +2,7 @@ import doom from "@/assets/doom.jpg";
 import duckHunt from "@/assets/duck-hunt.jpg";
 import snakeCover from "@/assets/snake-cover.png";
 import tetris from "@/assets/tetris.jpg";
+import doubleJump from "@/assets/double-jump.jpg";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { HelpCircle } from "lucide-react";
@@ -27,6 +28,12 @@ const games: Game[] = [
     image: snakeCover,
   },
   {
+    id: "double-jump",
+    title: "Double Jump",
+    year: "(2024)",
+    image: doubleJump,
+  },
+  {
     id: "doom",
     title: "DOOM",
     year: "(1998)",
@@ -46,6 +53,8 @@ const Home = () => {
       window.location.href = "/duck-hunt";
     } else if (gameId === "snake") {
       window.location.href = "/snake";
+    } else if (gameId === "double-jump") {
+      window.location.href = "/double-jump";
     }
   };
 

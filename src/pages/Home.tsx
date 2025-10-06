@@ -1,6 +1,6 @@
-import doom from "@/assets/doom.jpg";
 import duckHunt from "@/assets/duck-hunt.jpg";
 import snakeCover from "@/assets/snake-cover.png";
+import asteroidsCover from "@/assets/asteroids-cover.png";
 import tetris from "@/assets/tetris.jpg";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -27,10 +27,10 @@ const games: Game[] = [
     image: snakeCover,
   },
   {
-    id: "doom",
-    title: "DOOM",
-    year: "(1998)",
-    image: doom,
+    id: "asteroids",
+    title: "Asteroids",
+    year: "(1979)",
+    image: asteroidsCover,
   },
   {
     id: "tetris",
@@ -46,6 +46,8 @@ const Home = () => {
       window.location.href = "/duck-hunt";
     } else if (gameId === "snake") {
       window.location.href = "/snake";
+    } else if (gameId === "asteroids") {
+      window.location.href = "/asteroids";
     }
   };
 

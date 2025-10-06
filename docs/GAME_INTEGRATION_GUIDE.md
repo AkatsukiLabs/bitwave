@@ -1,7 +1,5 @@
 # 🎮 KAPLAY Game Integration Guide
 
-This guide explains how to integrate new games built with KAPLAY into the BITWAVE platform, following the pattern established with Duck Hunt.
-
 ## 📋 Table of Contents
 
 1. [General Structure](#general-structure)

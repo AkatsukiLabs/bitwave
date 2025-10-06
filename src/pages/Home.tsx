@@ -1,6 +1,6 @@
-import doom from "@/assets/doom.jpg";
 import duckHunt from "@/assets/duck-hunt.jpg";
 import snakeCover from "@/assets/snake-cover.png";
+import asteroidsCover from "@/assets/asteroids-cover.png";
 import tetris from "@/assets/tetris.jpg";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -30,7 +30,7 @@ const games: Game[] = [
     id: "asteroids",
     title: "Asteroids",
     year: "(1979)",
-    image: doom, // TODO: Replace with asteroids cover image
+    image: asteroidsCover,
   },
   {
     id: "tetris",

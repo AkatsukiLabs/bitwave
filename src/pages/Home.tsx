@@ -2,7 +2,7 @@ import doom from "@/assets/doom.jpg";
 import duckHunt from "@/assets/duck-hunt.jpg";
 import snakeCover from "@/assets/snake-cover.png";
 import tetris from "@/assets/tetris.jpg";
-import doubleJump from "@/assets/double-jump.jpg";
+import starknetLogo from "@/assets/starknet-logo.png";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { HelpCircle } from "lucide-react";
@@ -29,9 +29,9 @@ const games: Game[] = [
   },
   {
     id: "double-jump",
-    title: "Double Jump",
+    title: "Stark Jump",
     year: "(2024)",
-    image: doubleJump,
+    image: starknetLogo,
   },
   {
     id: "doom",

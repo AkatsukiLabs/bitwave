@@ -24,10 +24,12 @@ export function createPlayer(k: any, startPos: any) {
       // Movement (Doodle Jump style - tilt controls)
       moveLeft() {
         this.horizontalSpeed = -this.maxHorizontalSpeed;
+        console.log("moveLeft called - horizontalSpeed set to:", this.horizontalSpeed);
       },
       
       moveRight() {
         this.horizontalSpeed = this.maxHorizontalSpeed;
+        console.log("moveRight called - horizontalSpeed set to:", this.horizontalSpeed);
       },
       
       stopMoving() {
@@ -82,6 +84,11 @@ export function createPlayer(k: any, startPos: any) {
         
         // Apply horizontal movement (Doodle Jump style - smooth acceleration)
         this.vel.x = this.horizontalSpeed;
+        
+        // Debug horizontal movement
+        if (this.horizontalSpeed !== 0) {
+          console.log("Player update - horizontalSpeed:", this.horizontalSpeed, "vel.x:", this.vel.x, "pos.x change:", this.vel.x * k.dt());
+        }
         
         // Update position
         this.pos.x += this.vel.x * k.dt();

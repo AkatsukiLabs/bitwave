@@ -116,14 +116,14 @@ export function startGame(container: HTMLElement, options: GameOptions = {}) {
       ]);
 
       k.add([
-        k.text("Arrow Keys: Move", { font: "nes", size: 7 }),
+        k.text("Arrow Keys: Rotate & Thrust", { font: "nes", size: 7 }),
         k.anchor("center"),
         k.pos(k.center().x, k.center().y + 110),
         k.color(k.Color.fromHex(COLORS.TEXT)),
       ]);
 
       k.add([
-        k.text("SPACE: Shoot | P: Pause", { font: "nes", size: 7 }),
+        k.text("SPACE: Shoot", { font: "nes", size: 7 }),
         k.anchor("center"),
         k.pos(k.center().x, k.center().y + 125),
         k.color(k.Color.fromHex(COLORS.TEXT)),
@@ -234,7 +234,7 @@ export function startGame(container: HTMLElement, options: GameOptions = {}) {
       const buttonHeight = 60;
       const buttonY = uiY + 50;
 
-      // Left Button
+      // Rotate Left Button
       const rotateLeftBtn = k.add([
         k.rect(buttonSize, buttonHeight),
         k.pos(0, buttonY),
@@ -242,16 +242,16 @@ export function startGame(container: HTMLElement, options: GameOptions = {}) {
         k.color(k.Color.fromHex(COLORS.UI_BG).lighten(20)),
         k.opacity(0.7),
         k.z(11),
-        "left-btn",
+        "rotate-left-btn",
       ]);
       rotateLeftBtn.add([
-        k.text("< LEFT", { font: "nes", size: 6 }),
+        k.text("< ROTATE", { font: "nes", size: 6 }),
         k.anchor("center"),
         k.pos(buttonSize / 2, buttonHeight / 2),
         k.color(k.Color.fromHex(COLORS.TEXT)),
       ]);
 
-      // Right Button
+      // Rotate Right Button
       const rotateRightBtn = k.add([
         k.rect(buttonSize, buttonHeight),
         k.pos(buttonSize, buttonY),
@@ -259,16 +259,16 @@ export function startGame(container: HTMLElement, options: GameOptions = {}) {
         k.color(k.Color.fromHex(COLORS.UI_BG).lighten(20)),
         k.opacity(0.7),
         k.z(11),
-        "right-btn",
+        "rotate-right-btn",
       ]);
       rotateRightBtn.add([
-        k.text("RIGHT >", { font: "nes", size: 6 }),
+        k.text("ROTATE >", { font: "nes", size: 6 }),
         k.anchor("center"),
         k.pos(buttonSize / 2, buttonHeight / 2),
         k.color(k.Color.fromHex(COLORS.TEXT)),
       ]);
 
-      // Up Button
+      // Thrust Button
       const thrustBtn = k.add([
         k.rect(buttonSize, buttonHeight - 10),
         k.pos(0, buttonY + buttonHeight),
@@ -276,10 +276,10 @@ export function startGame(container: HTMLElement, options: GameOptions = {}) {
         k.color(k.Color.fromHex(COLORS.UI_BG).lighten(20)),
         k.opacity(0.7),
         k.z(11),
-        "up-btn",
+        "thrust-btn",
       ]);
       thrustBtn.add([
-        k.text("UP", { font: "nes", size: 6 }),
+        k.text("THRUST", { font: "nes", size: 6 }),
         k.anchor("center"),
         k.pos(buttonSize / 2, (buttonHeight - 10) / 2),
         k.color(k.Color.fromHex(COLORS.TEXT)),
@@ -310,45 +310,39 @@ export function startGame(container: HTMLElement, options: GameOptions = {}) {
       gameManager.startLevel();
 
       // Input state
-      let moveDirection = k.vec2(0, 0);
-      let isMovingUp = false;
-      let isMovingDown = false;
-      let isMovingLeft = false;
-      let isMovingRight = false;
+      let isRotatingLeft = false;
+      let isRotatingRight = false;
+      let isThrusting = false;
 
       // Touch events
       k.onTouchStart((pos: any) => {
-        if (rotateLeftBtn.hasPoint(pos)) isMovingLeft = true;
-        if (rotateRightBtn.hasPoint(pos)) isMovingRight = true;
-        if (thrustBtn.hasPoint(pos)) isMovingUp = true;
+        if (rotateLeftBtn.hasPoint(pos)) isRotatingLeft = true;
+        if (rotateRightBtn.hasPoint(pos)) isRotatingRight = true;
+        if (thrustBtn.hasPoint(pos)) isThrusting = true;
         if (fireBtn.hasPoint(pos)) ship.shoot(gameManager);
       });
 
       k.onTouchEnd(() => {
-        isMovingUp = false;
-        isMovingDown = false;
-        isMovingLeft = false;
-        isMovingRight = false;
+        isRotatingLeft = false;
+        isRotatingRight = false;
+        isThrusting = false;
+        ship.stopThrust();
       });
 
       // Keyboard events
-      k.onKeyDown("left", () => isMovingLeft = true);
-      k.onKeyDown("a", () => isMovingLeft = true);
-      k.onKeyDown("right", () => isMovingRight = true);
-      k.onKeyDown("d", () => isMovingRight = true);
-      k.onKeyDown("up", () => isMovingUp = true);
-      k.onKeyDown("w", () => isMovingUp = true);
-      k.onKeyDown("down", () => isMovingDown = true);
-      k.onKeyDown("s", () => isMovingDown = true);
+      k.onKeyDown("left", () => isRotatingLeft = true);
+      k.onKeyDown("a", () => isRotatingLeft = true);
+      k.onKeyDown("right", () => isRotatingRight = true);
+      k.onKeyDown("d", () => isRotatingRight = true);
+      k.onKeyDown("up", () => isThrusting = true);
+      k.onKeyDown("w", () => isThrusting = true);
 
-      k.onKeyRelease("left", () => isMovingLeft = false);
-      k.onKeyRelease("a", () => isMovingLeft = false);
-      k.onKeyRelease("right", () => isMovingRight = false);
-      k.onKeyRelease("d", () => isMovingRight = false);
-      k.onKeyRelease("up", () => isMovingUp = false);
-      k.onKeyRelease("w", () => isMovingUp = false);
-      k.onKeyRelease("down", () => isMovingDown = false);
-      k.onKeyRelease("s", () => isMovingDown = false);
+      k.onKeyRelease("left", () => isRotatingLeft = false);
+      k.onKeyRelease("a", () => isRotatingLeft = false);
+      k.onKeyRelease("right", () => isRotatingRight = false);
+      k.onKeyRelease("d", () => isRotatingRight = false);
+      k.onKeyRelease("up", () => { isThrusting = false; ship.stopThrust(); });
+      k.onKeyRelease("w", () => { isThrusting = false; ship.stopThrust(); });
 
       k.onKeyPress("space", () => ship.shoot(gameManager));
 
@@ -385,19 +379,16 @@ export function startGame(container: HTMLElement, options: GameOptions = {}) {
       k.onUpdate(() => {
         if (gameManager.state !== "playing") return;
 
-        // Calculate movement direction from input
-        moveDirection = k.vec2(0, 0);
-        if (isMovingLeft) moveDirection.x -= 1;
-        if (isMovingRight) moveDirection.x += 1;
-        if (isMovingUp) moveDirection.y -= 1;
-        if (isMovingDown) moveDirection.y += 1;
-
-        // Normalize diagonal movement
-        if (moveDirection.len() > 0) {
-          moveDirection = moveDirection.unit();
-          ship.moveShip(moveDirection, k.dt());
+        // Ship controls
+        if (isRotatingLeft) ship.rotateLeft(k.dt());
+        if (isRotatingRight) ship.rotateRight(k.dt());
+        if (isThrusting) {
+          ship.thrust(k.dt());
+        } else {
+          ship.stopThrust();
         }
 
+        ship.applyMovement(k.dt());
         ship.wrapScreen();
 
         // Update asteroids

@@ -322,9 +322,16 @@ export function startGame(container: HTMLElement, options: GameOptions = {}) {
         console.log("Left button clicked");
         if (gameManager.state === "playing") {
           console.log("Moving left - current pos.x:", player.pos.x);
-          // Move player directly to the left
-          player.pos.x -= 30; // Move 30 pixels to the left
-          console.log("Moving left - new pos.x:", player.pos.x);
+          // Set smooth movement to the left (reduced speed)
+          player.horizontalSpeed = -120; // Reduced left movement
+          console.log("Moving left - horizontalSpeed set to:", player.horizontalSpeed);
+          // Stop movement after a shorter delay
+          k.wait(0.15, () => {
+            if (gameManager.state === "playing") {
+              console.log("Stopping left movement");
+              player.horizontalSpeed = 0;
+            }
+          });
         }
       });
 
@@ -332,9 +339,16 @@ export function startGame(container: HTMLElement, options: GameOptions = {}) {
         console.log("Right button clicked");
         if (gameManager.state === "playing") {
           console.log("Moving right - current pos.x:", player.pos.x);
-          // Move player directly to the right
-          player.pos.x += 30; // Move 30 pixels to the right
-          console.log("Moving right - new pos.x:", player.pos.x);
+          // Set smooth movement to the right (reduced speed)
+          player.horizontalSpeed = 120; // Reduced right movement
+          console.log("Moving right - horizontalSpeed set to:", player.horizontalSpeed);
+          // Stop movement after a shorter delay
+          k.wait(0.15, () => {
+            if (gameManager.state === "playing") {
+              console.log("Stopping right movement");
+              player.horizontalSpeed = 0;
+            }
+          });
         }
       });
 
@@ -343,8 +357,16 @@ export function startGame(container: HTMLElement, options: GameOptions = {}) {
         console.log("Left button touch start");
         if (gameManager.state === "playing") {
           console.log("Moving left (touch) - current pos.x:", player.pos.x);
-          player.pos.x -= 30; // Move 30 pixels to the left
-          console.log("Moving left (touch) - new pos.x:", player.pos.x);
+          // Set smooth movement to the left (reduced speed)
+          player.horizontalSpeed = -120; // Reduced left movement
+          console.log("Moving left (touch) - horizontalSpeed set to:", player.horizontalSpeed);
+          // Stop movement after a shorter delay
+          k.wait(0.15, () => {
+            if (gameManager.state === "playing") {
+              console.log("Stopping left movement (touch)");
+              player.horizontalSpeed = 0;
+            }
+          });
         }
       });
 
@@ -352,8 +374,16 @@ export function startGame(container: HTMLElement, options: GameOptions = {}) {
         console.log("Right button touch start");
         if (gameManager.state === "playing") {
           console.log("Moving right (touch) - current pos.x:", player.pos.x);
-          player.pos.x += 30; // Move 30 pixels to the right
-          console.log("Moving right (touch) - new pos.x:", player.pos.x);
+          // Set smooth movement to the right (reduced speed)
+          player.horizontalSpeed = 120; // Reduced right movement
+          console.log("Moving right (touch) - horizontalSpeed set to:", player.horizontalSpeed);
+          // Stop movement after a shorter delay
+          k.wait(0.15, () => {
+            if (gameManager.state === "playing") {
+              console.log("Stopping right movement (touch)");
+              player.horizontalSpeed = 0;
+            }
+          });
         }
       });
 

@@ -75,10 +75,13 @@ export function createAsteroid(
       },
 
       wrapScreen() {
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        const uiHeight = isMobile ? 180 : 120;
+
         if (this.pos.x < -sizeValue) this.pos.x = k.width() + sizeValue;
         if (this.pos.x > k.width() + sizeValue) this.pos.x = -sizeValue;
-        if (this.pos.y < -sizeValue) this.pos.y = k.height() - 60 + sizeValue;
-        if (this.pos.y > k.height() - 60 + sizeValue) this.pos.y = -sizeValue;
+        if (this.pos.y < -sizeValue) this.pos.y = k.height() - uiHeight + sizeValue;
+        if (this.pos.y > k.height() - uiHeight + sizeValue) this.pos.y = -sizeValue;
       }
     }
   ]);
@@ -96,6 +99,10 @@ export function createAsteroid(
 
 // Spawn asteroids at screen edges
 export function spawnAsteroidAtEdge(k: any, size: "large" | "medium" | "small") {
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  const uiHeight = isMobile ? 180 : 120;
+  const gameHeight = k.height() - uiHeight;
+
   const edge = k.choose(["top", "bottom", "left", "right"]);
   let pos;
 
@@ -104,13 +111,13 @@ export function spawnAsteroidAtEdge(k: any, size: "large" | "medium" | "small") 
       pos = k.vec2(k.rand(0, k.width()), -40);
       break;
     case "bottom":
-      pos = k.vec2(k.rand(0, k.width()), k.height() - 20);
+      pos = k.vec2(k.rand(0, k.width()), gameHeight + 20);
       break;
     case "left":
-      pos = k.vec2(-40, k.rand(0, k.height() - 60));
+      pos = k.vec2(-40, k.rand(0, gameHeight));
       break;
     case "right":
-      pos = k.vec2(k.width() + 40, k.rand(0, k.height() - 60));
+      pos = k.vec2(k.width() + 40, k.rand(0, gameHeight));
       break;
   }
 

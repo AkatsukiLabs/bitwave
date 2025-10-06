@@ -22,8 +22,11 @@ export function createBullet(k: any, pos: any, angle: number) {
 
       isExpired() {
         // Bullet expires if it goes out of bounds or exceeds lifetime
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        const uiHeight = isMobile ? 180 : 120;
+
         const outOfBounds = this.pos.x < 0 || this.pos.x > k.width() ||
-                           this.pos.y < 0 || this.pos.y > k.height() - 120;
+                           this.pos.y < 0 || this.pos.y > k.height() - uiHeight;
         return this.lifetime >= GAME_CONFIG.BULLET_LIFETIME || outOfBounds;
       }
     }

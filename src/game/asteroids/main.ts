@@ -46,12 +46,15 @@ export function startGame(container: HTMLElement, options: GameOptions = {}) {
 
     console.log('🎮 Creating new KAPLAY instance...');
 
+    // Detect if mobile
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
     const k = kaplay({
       width: GAME_CONFIG.SCREEN_WIDTH,
-      height: GAME_CONFIG.SCREEN_HEIGHT + 120,
+      height: GAME_CONFIG.SCREEN_HEIGHT + (isMobile ? 180 : 120),
       letterbox: true,
       touchToMouse: true,
-      scale: 1.2,
+      scale: isMobile ? 2 : 3,
       pixelDensity: devicePixelRatio,
       debug: false,
       background: [0, 0, 0],
@@ -229,10 +232,11 @@ export function startGame(container: HTMLElement, options: GameOptions = {}) {
         k.z(11),
       ]);
 
-      // Mobile touch controls
+      // Mobile touch controls - Optimized for accessibility
+      const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
       const buttonSize = k.width() / 2;
-      const buttonHeight = 60;
-      const buttonY = uiY + 50;
+      const buttonHeight = isMobileDevice ? 75 : 60;
+      const buttonY = uiY + 40;
 
       // Rotate Left Button
       const rotateLeftBtn = k.add([
@@ -240,12 +244,12 @@ export function startGame(container: HTMLElement, options: GameOptions = {}) {
         k.pos(0, buttonY),
         k.area(),
         k.color(k.Color.fromHex(COLORS.UI_BG).lighten(20)),
-        k.opacity(0.7),
+        k.opacity(0.8),
         k.z(11),
         "rotate-left-btn",
       ]);
       rotateLeftBtn.add([
-        k.text("< ROTATE", { font: "nes", size: 6 }),
+        k.text("◀ ROTATE", { font: "nes", size: isMobileDevice ? 7 : 6 }),
         k.anchor("center"),
         k.pos(buttonSize / 2, buttonHeight / 2),
         k.color(k.Color.fromHex(COLORS.TEXT)),
@@ -257,12 +261,12 @@ export function startGame(container: HTMLElement, options: GameOptions = {}) {
         k.pos(buttonSize, buttonY),
         k.area(),
         k.color(k.Color.fromHex(COLORS.UI_BG).lighten(20)),
-        k.opacity(0.7),
+        k.opacity(0.8),
         k.z(11),
         "rotate-right-btn",
       ]);
       rotateRightBtn.add([
-        k.text("ROTATE >", { font: "nes", size: 6 }),
+        k.text("ROTATE ▶", { font: "nes", size: isMobileDevice ? 7 : 6 }),
         k.anchor("center"),
         k.pos(buttonSize / 2, buttonHeight / 2),
         k.color(k.Color.fromHex(COLORS.TEXT)),
@@ -270,36 +274,36 @@ export function startGame(container: HTMLElement, options: GameOptions = {}) {
 
       // Thrust Button
       const thrustBtn = k.add([
-        k.rect(buttonSize, buttonHeight - 10),
+        k.rect(buttonSize, buttonHeight),
         k.pos(0, buttonY + buttonHeight),
         k.area(),
-        k.color(k.Color.fromHex(COLORS.UI_BG).lighten(20)),
-        k.opacity(0.7),
+        k.color(k.Color.fromHex(COLORS.UI_BG).lighten(30)),
+        k.opacity(0.8),
         k.z(11),
         "thrust-btn",
       ]);
       thrustBtn.add([
-        k.text("THRUST", { font: "nes", size: 6 }),
+        k.text("🚀 THRUST", { font: "nes", size: isMobileDevice ? 7 : 6 }),
         k.anchor("center"),
-        k.pos(buttonSize / 2, (buttonHeight - 10) / 2),
-        k.color(k.Color.fromHex(COLORS.TEXT)),
+        k.pos(buttonSize / 2, buttonHeight / 2),
+        k.color(k.Color.fromHex(COLORS.SHIP)),
       ]);
 
       // Fire Button
       const fireBtn = k.add([
-        k.rect(buttonSize, buttonHeight - 10),
+        k.rect(buttonSize, buttonHeight),
         k.pos(buttonSize, buttonY + buttonHeight),
         k.area(),
-        k.color(k.Color.fromHex(COLORS.UI_BG).lighten(20)),
-        k.opacity(0.7),
+        k.color(k.Color.fromHex(COLORS.UI_BG).lighten(30)),
+        k.opacity(0.8),
         k.z(11),
         "fire-btn",
       ]);
       fireBtn.add([
-        k.text("FIRE", { font: "nes", size: 6 }),
+        k.text("🔫 FIRE", { font: "nes", size: isMobileDevice ? 7 : 6 }),
         k.anchor("center"),
-        k.pos(buttonSize / 2, (buttonHeight - 10) / 2),
-        k.color(k.Color.fromHex(COLORS.TEXT)),
+        k.pos(buttonSize / 2, buttonHeight / 2),
+        k.color(k.Color.fromHex(COLORS.BULLET)),
       ]);
 
       // Create ship

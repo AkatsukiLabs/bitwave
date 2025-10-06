@@ -6,9 +6,9 @@ export function createShip(k: any, startPos: any) {
     k.pos(startPos),
     k.rotate(0),
     k.polygon([
-      k.vec2(0, -GAME_CONFIG.SHIP_SIZE),      // Top point
-      k.vec2(-8, GAME_CONFIG.SHIP_SIZE),      // Bottom left
-      k.vec2(8, GAME_CONFIG.SHIP_SIZE),       // Bottom right
+      k.vec2(0, -GAME_CONFIG.SHIP_SIZE),           // Top point
+      k.vec2(-GAME_CONFIG.SHIP_SIZE * 0.6, GAME_CONFIG.SHIP_SIZE),   // Bottom left
+      k.vec2(GAME_CONFIG.SHIP_SIZE * 0.6, GAME_CONFIG.SHIP_SIZE),    // Bottom right
     ]),
     k.area(),
     k.anchor("center"),
@@ -53,10 +53,13 @@ export function createShip(k: any, startPos: any) {
 
       wrapScreen() {
         // Wrap around screen edges
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        const uiHeight = isMobile ? 180 : 120;
+
         if (this.pos.x < 0) this.pos.x = k.width();
         if (this.pos.x > k.width()) this.pos.x = 0;
-        if (this.pos.y < 0) this.pos.y = k.height() - 120;
-        if (this.pos.y > k.height() - 120) this.pos.y = 0;
+        if (this.pos.y < 0) this.pos.y = k.height() - uiHeight;
+        if (this.pos.y > k.height() - uiHeight) this.pos.y = 0;
       },
 
       shoot(gameManager: any) {
@@ -84,9 +87,9 @@ export function createShip(k: any, startPos: any) {
 
     k.drawPolygon({
       pts: [
-        k.vec2(0, -GAME_CONFIG.SHIP_SIZE),      // Top point
-        k.vec2(-8, GAME_CONFIG.SHIP_SIZE),      // Bottom left
-        k.vec2(8, GAME_CONFIG.SHIP_SIZE),       // Bottom right
+        k.vec2(0, -GAME_CONFIG.SHIP_SIZE),                           // Top point
+        k.vec2(-GAME_CONFIG.SHIP_SIZE * 0.6, GAME_CONFIG.SHIP_SIZE),      // Bottom left
+        k.vec2(GAME_CONFIG.SHIP_SIZE * 0.6, GAME_CONFIG.SHIP_SIZE),       // Bottom right
       ],
       color: shipColor,
     });
@@ -95,9 +98,9 @@ export function createShip(k: any, startPos: any) {
     if (ship.isThrusting) {
       k.drawPolygon({
         pts: [
-          k.vec2(-4, GAME_CONFIG.SHIP_SIZE),     // Left side
-          k.vec2(4, GAME_CONFIG.SHIP_SIZE),      // Right side
-          k.vec2(0, GAME_CONFIG.SHIP_SIZE + 8),  // Flame tip
+          k.vec2(-3, GAME_CONFIG.SHIP_SIZE),     // Left side
+          k.vec2(3, GAME_CONFIG.SHIP_SIZE),      // Right side
+          k.vec2(0, GAME_CONFIG.SHIP_SIZE + 5),  // Flame tip
         ],
         color: k.Color.fromHex("#FF8800"),
       });

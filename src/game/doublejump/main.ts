@@ -292,98 +292,58 @@ export function startGame(container: HTMLElement, options: GameOptions = {}) {
         }
       });
 
-      // Arrow key controls for movement
-      k.onKeyDown("left", () => {
-        if (gameManager.state === "playing") {
-          player.moveLeft();
-        }
-      });
+      // Arrow key controls for movement - TEMPORARILY DISABLED TO FIX BUTTON CONFLICT
+      // k.onKeyDown("left", () => {
+      //   if (gameManager.state === "playing") {
+      //     player.moveLeft();
+      //   }
+      // });
 
-      k.onKeyDown("right", () => {
-        if (gameManager.state === "playing") {
-          player.moveRight();
-        }
-      });
+      // k.onKeyDown("right", () => {
+      //   if (gameManager.state === "playing") {
+      //     player.moveRight();
+      //   }
+      // });
 
-      k.onKeyRelease("left", () => {
-        if (gameManager.state === "playing") {
-          player.stopMoving();
-        }
-      });
+      // k.onKeyRelease("left", () => {
+      //   if (gameManager.state === "playing") {
+      //     player.stopMoving();
+      //   }
+      // });
 
-      k.onKeyRelease("right", () => {
-        if (gameManager.state === "playing") {
-          player.stopMoving();
-        }
-      });
+      // k.onKeyRelease("right", () => {
+      //   if (gameManager.state === "playing") {
+      //     player.stopMoving();
+      //   }
+      // });
 
       // Mobile button controls - press and hold to move
       leftButton.onClick(() => {
-        console.log("Left button clicked");
         if (gameManager.state === "playing") {
-          console.log("Moving left - current pos.x:", player.pos.x);
-          // Set smooth movement to the left (reduced speed)
-          player.horizontalSpeed = -120; // Reduced left movement
-          console.log("Moving left - horizontalSpeed set to:", player.horizontalSpeed);
-          // Stop movement after a shorter delay
-          k.wait(0.15, () => {
-            if (gameManager.state === "playing") {
-              console.log("Stopping left movement");
-              player.horizontalSpeed = 0;
-            }
-          });
+          // Move directly to the left - SIMPLE AND DIRECT
+          player.pos.x -= 20;
         }
       });
 
       rightButton.onClick(() => {
-        console.log("Right button clicked");
         if (gameManager.state === "playing") {
-          console.log("Moving right - current pos.x:", player.pos.x);
-          // Set smooth movement to the right (reduced speed)
-          player.horizontalSpeed = 120; // Reduced right movement
-          console.log("Moving right - horizontalSpeed set to:", player.horizontalSpeed);
-          // Stop movement after a shorter delay
-          k.wait(0.15, () => {
-            if (gameManager.state === "playing") {
-              console.log("Stopping right movement");
-              player.horizontalSpeed = 0;
-            }
-          });
+          // Move directly to the right - SIMPLE AND DIRECT
+          player.pos.x += 20;
         }
       });
 
       // Touch controls for mobile - same as click
       leftButton.onTouchStart(() => {
-        console.log("Left button touch start");
         if (gameManager.state === "playing") {
-          console.log("Moving left (touch) - current pos.x:", player.pos.x);
-          // Set smooth movement to the left (reduced speed)
-          player.horizontalSpeed = -120; // Reduced left movement
-          console.log("Moving left (touch) - horizontalSpeed set to:", player.horizontalSpeed);
-          // Stop movement after a shorter delay
-          k.wait(0.15, () => {
-            if (gameManager.state === "playing") {
-              console.log("Stopping left movement (touch)");
-              player.horizontalSpeed = 0;
-            }
-          });
+          // Move directly to the left - SIMPLE AND DIRECT
+          player.pos.x -= 20;
         }
       });
 
       rightButton.onTouchStart(() => {
-        console.log("Right button touch start");
         if (gameManager.state === "playing") {
-          console.log("Moving right (touch) - current pos.x:", player.pos.x);
-          // Set smooth movement to the right (reduced speed)
-          player.horizontalSpeed = 120; // Reduced right movement
-          console.log("Moving right (touch) - horizontalSpeed set to:", player.horizontalSpeed);
-          // Stop movement after a shorter delay
-          k.wait(0.15, () => {
-            if (gameManager.state === "playing") {
-              console.log("Stopping right movement (touch)");
-              player.horizontalSpeed = 0;
-            }
-          });
+          // Move directly to the right - SIMPLE AND DIRECT
+          player.pos.x += 20;
         }
       });
 

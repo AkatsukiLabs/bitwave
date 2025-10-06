@@ -87,12 +87,22 @@ export function createPlayer(k: any, startPos: any) {
         
         // Debug horizontal movement
         if (this.horizontalSpeed !== 0) {
-          console.log("Player update - horizontalSpeed:", this.horizontalSpeed, "vel.x:", this.vel.x, "pos.x change:", this.vel.x * k.dt());
+          console.log("=== PLAYER UPDATE DEBUG ===");
+          console.log("horizontalSpeed:", this.horizontalSpeed);
+          console.log("vel.x:", this.vel.x);
+          console.log("pos.x before update:", this.pos.x);
+          console.log("pos.x change:", this.vel.x * k.dt());
         }
         
         // Update position
         this.pos.x += this.vel.x * k.dt();
         this.pos.y += this.vel.y * k.dt();
+        
+        // Debug after position update
+        if (this.horizontalSpeed !== 0) {
+          console.log("pos.x after update:", this.pos.x);
+          console.log("Direction check - negative vel.x should move LEFT");
+        }
         
         // Keep player within screen bounds (wrap around like Doodle Jump)
         if (this.pos.x < -this.width / 2) {

@@ -60,9 +60,7 @@ const Store = () => {
                 />
               </div>
               <div>
-                <p className="text-foreground font-bold">
-                  {pkg.coins} coins
-                </p>
+                <p className="text-foreground font-bold">{pkg.coins} coins</p>
                 <div className="flex items-center gap-1">
                   <span className="text-xl font-bold text-foreground">
                     {pkg.price}
@@ -71,10 +69,7 @@ const Store = () => {
                 </div>
               </div>
             </div>
-            <Button
-              variant="bitwave"
-              className="font-bold"
-            >
+            <Button variant="bitwave" className="font-bold">
               Buy
             </Button>
           </div>

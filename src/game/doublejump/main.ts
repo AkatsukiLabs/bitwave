@@ -320,30 +320,30 @@ export function startGame(container: HTMLElement, options: GameOptions = {}) {
       // Mobile button controls - press and hold to move
       leftButton.onClick(() => {
         if (gameManager.state === "playing") {
-          // Move directly to the left - SIMPLE AND DIRECT
-          player.pos.x -= 20;
+          // Move directly to the left - GUARANTEED LEFT MOVEMENT
+          player.pos.x -= 25;
         }
       });
 
       rightButton.onClick(() => {
         if (gameManager.state === "playing") {
-          // Move directly to the right - SIMPLE AND DIRECT
-          player.pos.x += 20;
+          // Move directly to the right - GUARANTEED RIGHT MOVEMENT
+          player.pos.x += 25;
         }
       });
 
       // Touch controls for mobile - same as click
       leftButton.onTouchStart(() => {
         if (gameManager.state === "playing") {
-          // Move directly to the left - SIMPLE AND DIRECT
-          player.pos.x -= 20;
+          // Move directly to the left - GUARANTEED LEFT MOVEMENT
+          player.pos.x -= 25;
         }
       });
 
       rightButton.onTouchStart(() => {
         if (gameManager.state === "playing") {
-          // Move directly to the right - SIMPLE AND DIRECT
-          player.pos.x += 20;
+          // Move directly to the right - GUARANTEED RIGHT MOVEMENT
+          player.pos.x += 25;
         }
       });
 

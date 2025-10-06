@@ -77,11 +77,13 @@ export function createAsteroid(
       wrapScreen() {
         const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
         const uiHeight = isMobile ? 180 : 120;
+        const gameHeight = k.height() - uiHeight;
 
+        // Wrap with margin for smooth appearance
         if (this.pos.x < -sizeValue) this.pos.x = k.width() + sizeValue;
         if (this.pos.x > k.width() + sizeValue) this.pos.x = -sizeValue;
-        if (this.pos.y < -sizeValue) this.pos.y = k.height() - uiHeight + sizeValue;
-        if (this.pos.y > k.height() - uiHeight + sizeValue) this.pos.y = -sizeValue;
+        if (this.pos.y < -sizeValue) this.pos.y = gameHeight + sizeValue;
+        if (this.pos.y > gameHeight + sizeValue) this.pos.y = -sizeValue;
       }
     }
   ]);

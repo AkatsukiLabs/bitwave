@@ -52,14 +52,27 @@ export function createShip(k: any, startPos: any) {
       },
 
       wrapScreen() {
-        // Wrap around screen edges
+        // Wrap around screen edges (within green border)
+        const borderThickness = 4;
         const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
         const uiHeight = isMobile ? 180 : 120;
+        const gameHeight = k.height() - uiHeight;
 
-        if (this.pos.x < 0) this.pos.x = k.width();
-        if (this.pos.x > k.width()) this.pos.x = 0;
-        if (this.pos.y < 0) this.pos.y = k.height() - uiHeight;
-        if (this.pos.y > k.height() - uiHeight) this.pos.y = 0;
+        // Horizontal wrapping
+        if (this.pos.x < borderThickness) {
+          this.pos.x = k.width() - borderThickness;
+        }
+        if (this.pos.x > k.width() - borderThickness) {
+          this.pos.x = borderThickness;
+        }
+
+        // Vertical wrapping
+        if (this.pos.y < borderThickness) {
+          this.pos.y = gameHeight - borderThickness;
+        }
+        if (this.pos.y > gameHeight - borderThickness) {
+          this.pos.y = borderThickness;
+        }
       },
 
       shoot(gameManager: any) {

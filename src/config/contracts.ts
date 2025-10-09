@@ -1,0 +1,2 @@
+export const WBTC_ADDRESS = "0x033d52ef1746ab58c5a22f8e4d80eaaf7c5a08fcfaa6c5e5365680d0ed482f34";
+export const vWBTC_ADDRESS = "0x033d52ef1746ab58c5a22f8e4d80eaaf7c5a08fcfaa6c5e5365680d0ed482f34";

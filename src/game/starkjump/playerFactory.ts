@@ -1,145 +1,139 @@
-import { GAME_CONFIG, COLORS } from "./constant";
-import { clamp } from "./utils";
+import { COLORS, GAME_CONFIG } from "./constant";
+import { isPlayerOnPlatform } from "./utils";
 
 export function createPlayer(k: any, startPos: any) {
   const player = k.add([
+    k.rect(GAME_CONFIG.PLAYER_SIZE, GAME_CONFIG.PLAYER_SIZE),
     k.pos(startPos),
-    k.area({ width: GAME_CONFIG.PLAYER_SIZE, height: GAME_CONFIG.PLAYER_SIZE }),
+    k.color(k.Color.fromHex(COLORS.PLAYER)),
+    k.area(),
     k.anchor("center"),
     "player",
     {
-      velocity: k.vec2(0, 0),
-      isGrounded: false,
+      // Player state
       isJumping: false,
-      facingRight: true,
-      invincible: false,
-      invincibleTime: 0,
+      canDoubleJump: true,
+      doubleJumpUsed: false,
+      score: 0,
+      highestY: startPos.y,
+      vel: k.vec2(0, 0),
+      autoJump: true, // Doodle Jump style - always jumping
+      horizontalSpeed: 0,
+      maxHorizontalSpeed: GAME_CONFIG.PLAYER_SPEED,
       
-      // Movement methods
-      moveLeft(dt: number) {
-        this.velocity.x = -GAME_CONFIG.PLAYER_SPEED;
-        this.facingRight = false;
+      // Movement (Doodle Jump style - tilt controls)
+      moveLeft() {
+        this.horizontalSpeed = -this.maxHorizontalSpeed;
+        console.log("moveLeft called - horizontalSpeed set to:", this.horizontalSpeed);
       },
       
-      moveRight(dt: number) {
-        this.velocity.x = GAME_CONFIG.PLAYER_SPEED;
-        this.facingRight = true;
+      moveRight() {
+        this.horizontalSpeed = this.maxHorizontalSpeed;
+        console.log("moveRight called - horizontalSpeed set to:", this.horizontalSpeed);
       },
       
+      stopMoving() {
+        this.horizontalSpeed = 0;
+      },
+      
+      // Jump mechanics (automatic like Doodle Jump)
       jump() {
-        if (this.isGrounded && !this.isJumping) {
-          this.velocity.y = GAME_CONFIG.JUMP_VELOCITY;
-          this.isGrounded = false;
+        if (!this.isJumping) {
+          this.vel.y = -GAME_CONFIG.PLAYER_JUMP_FORCE;
           this.isJumping = true;
-          k.play("jump", { volume: 0.3 });
+          this.doubleJumpUsed = false;
         }
       },
       
-      applyPhysics(dt: number) {
+      doubleJump() {
+        if (this.isJumping && !this.doubleJumpUsed && this.canDoubleJump) {
+          this.vel.y = -GAME_CONFIG.PLAYER_JUMP_FORCE * 0.8; // Slightly weaker
+          this.doubleJumpUsed = true;
+        }
+      },
+      
+      // Check if player is on ground/platform
+      checkGroundCollision(platforms: any[]) {
+        for (const platform of platforms) {
+          if (isPlayerOnPlatform(this, platform)) {
+            if (this.vel.y >= 0) { // When falling or stationary
+              this.isJumping = false;
+              this.doubleJumpUsed = false;
+              // Position player on top of platform
+              this.pos.y = platform.pos.y - platform.platformHeight / 2 - this.height / 2;
+              
+              // Handle platform-specific behavior
+              if (platform.onPlayerLand) {
+                platform.onPlayerLand();
+              }
+              
+              // Auto-jump when landing on platform (like Doodle Jump)
+              this.vel.y = -GAME_CONFIG.PLAYER_JUMP_FORCE;
+              this.isJumping = true;
+              return true;
+            }
+          }
+        }
+        return false;
+      },
+      
+      // Update player state
+      update() {
         // Apply gravity
-        this.velocity.y += GAME_CONFIG.GRAVITY * dt;
+        this.vel.y += GAME_CONFIG.GRAVITY * k.dt();
         
-        // Apply friction to horizontal movement
-        this.velocity.x *= GAME_CONFIG.FRICTION;
+        // Apply horizontal movement (Doodle Jump style - smooth acceleration)
+        this.vel.x = this.horizontalSpeed;
         
-        // Cap fall speed
-        if (this.velocity.y > GAME_CONFIG.MAX_FALL_SPEED) {
-          this.velocity.y = GAME_CONFIG.MAX_FALL_SPEED;
+        // Debug horizontal movement
+        if (this.horizontalSpeed !== 0) {
+          console.log("=== PLAYER UPDATE DEBUG ===");
+          console.log("horizontalSpeed:", this.horizontalSpeed);
+          console.log("vel.x:", this.vel.x);
+          console.log("pos.x before update:", this.pos.x);
+          console.log("pos.x change:", this.vel.x * k.dt());
         }
         
         // Update position
-        this.pos = this.pos.add(this.velocity.scale(dt));
+        this.pos.x += this.vel.x * k.dt();
+        this.pos.y += this.vel.y * k.dt();
         
-        // Keep player within screen bounds horizontally
-        this.pos.x = clamp(
-          this.pos.x, 
-          GAME_CONFIG.PLAYER_SIZE / 2, 
-          k.width() - GAME_CONFIG.PLAYER_SIZE / 2
-        );
-      },
-      
-      landOnPlatform(platform: any) {
-        this.isGrounded = true;
-        this.isJumping = false;
-        this.velocity.y = 0;
-        this.pos.y = platform.pos.y - GAME_CONFIG.PLATFORM_HEIGHT / 2 - GAME_CONFIG.PLAYER_SIZE / 2;
+        // Debug after position update
+        if (this.horizontalSpeed !== 0) {
+          console.log("pos.x after update:", this.pos.x);
+          console.log("Direction check - negative vel.x should move LEFT");
+        }
         
-        // Auto-jump when landing
-        this.jump();
-      },
-      
-      bounceOnPlatform(platform: any) {
-        this.velocity.y = GAME_CONFIG.JUMP_VELOCITY * GAME_CONFIG.BOUNCE_MULTIPLIER;
-        this.isGrounded = false;
-        this.isJumping = true;
-        k.play("bounce", { volume: 0.4 });
-      },
-      
-      checkScreenBounds() {
-        // Check if player fell below screen
-        if (this.pos.y > k.height() + 50) {
-          return "game-over";
+        // Keep player within screen bounds (wrap around like Doodle Jump)
+        if (this.pos.x < -this.width / 2) {
+          this.pos.x = k.width() + this.width / 2;
+        } else if (this.pos.x > k.width() + this.width / 2) {
+          this.pos.x = -this.width / 2;
         }
-        return "playing";
-      },
-      
-      setInvincible(duration: number) {
-        this.invincible = true;
-        this.invincibleTime = duration;
-      },
-      
-      updateInvincibility(dt: number) {
-        if (this.invincible) {
-          this.invincibleTime -= dt;
-          if (this.invincibleTime <= 0) {
-            this.invincible = false;
-          }
+        
+        // Update highest position for scoring
+        if (this.pos.y < this.highestY) {
+          this.highestY = this.pos.y;
+          this.score = Math.floor((startPos.y - this.highestY) / 10);
         }
-      }
-    }
+        
+        // Reset double jump when on ground
+        if (!this.isJumping) {
+          this.doubleJumpUsed = false;
+        }
+      },
+      
+      // Get player bounds for collision detection
+      getBounds() {
+        return {
+          left: this.pos.x - this.width / 2,
+          right: this.pos.x + this.width / 2,
+          top: this.pos.y - this.height / 2,
+          bottom: this.pos.y + this.height / 2,
+        };
+      },
+    },
   ]);
-
-  // Visual rendering
-  player.onDraw(() => {
-    // Draw player as a rounded square with gradient
-    const gradient = k.gradient([
-      [0, COLORS.PLAYER],
-      [1, k.Color.fromHex(COLORS.PLAYER).darken(0.3)]
-    ]);
-    
-    // Main body
-    k.drawRect({
-      width: GAME_CONFIG.PLAYER_SIZE,
-      height: GAME_CONFIG.PLAYER_SIZE,
-      radius: 4,
-      color: player.invincible && Math.floor(k.time() * 10) % 2 === 0
-        ? k.Color.fromHex("#ffffff")
-        : gradient,
-      pos: k.vec2(-GAME_CONFIG.PLAYER_SIZE / 2, -GAME_CONFIG.PLAYER_SIZE / 2)
-    });
-    
-    // Eyes
-    const eyeOffset = 3;
-    const eyeY = -2;
-    k.drawCircle({
-      radius: 2,
-      color: k.Color.fromHex("#000000"),
-      pos: k.vec2(
-        player.facingRight ? eyeOffset : -eyeOffset,
-        eyeY
-      )
-    });
-    
-    // Outline
-    k.drawRect({
-      width: GAME_CONFIG.PLAYER_SIZE,
-      height: GAME_CONFIG.PLAYER_SIZE,
-      radius: 4,
-      stroke: 1,
-      color: k.Color.fromHex(COLORS.PLAYER_OUTLINE),
-      pos: k.vec2(-GAME_CONFIG.PLAYER_SIZE / 2, -GAME_CONFIG.PLAYER_SIZE / 2)
-    });
-  });
 
   return player;
 }

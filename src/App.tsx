@@ -16,6 +16,7 @@ import AuthCallback from "./pages/AuthCallback";
 import DuckHunt from "./pages/DuckHunt";
 import Snake from "./pages/Snake";
 import Asteroids from "./pages/Asteroids";
+import StrkJump from "./pages/StrkJump";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -54,6 +55,7 @@ const App = () => (
           <Route path="/duck-hunt" element={<DuckHunt />} />
           <Route path="/snake" element={<Snake />} />
           <Route path="/asteroids" element={<Asteroids />} />
+          <Route path="/strkjump" element={<StrkJump />} />
 
           {/* Root route - redirect to auth if not authenticated */}
           <Route

@@ -2,6 +2,7 @@ import duckHunt from "@/assets/duck-hunt.jpg";
 import snakeCover from "@/assets/snake-cover.png";
 import asteroidsCover from "@/assets/asteroids-cover.png";
 import tetris from "@/assets/tetris.jpg";
+import starkjumpLogo from "/graphics/starkjump.png";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { HelpCircle } from "lucide-react";
@@ -38,6 +39,12 @@ const games: Game[] = [
     year: "(1999)",
     image: tetris,
   },
+  {
+    id: "strkjump",
+    title: "StrkJump",
+    year: "(2024)",
+    image: starkjumpLogo,
+  },
 ];
 
 const Home = () => {
@@ -48,6 +55,8 @@ const Home = () => {
       window.location.href = "/snake";
     } else if (gameId === "asteroids") {
       window.location.href = "/asteroids";
+    } else if (gameId === "strkjump") {
+      window.location.href = "/strkjump";
     }
   };
 

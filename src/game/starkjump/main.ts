@@ -76,9 +76,6 @@ export function startGame(container: HTMLElement, options: GameOptions = {}) {
     // Load font
     k.loadFont("arcade", "./fonts/nintendo-nes-font/nintendo-nes-font.ttf");
 
-    // Load Starknet logo
-    k.loadSprite("starknet-logo", "./src/assets/starknet-logo.png");
-
     k.scene("main-menu", () => {
       k.add([
         k.rect(k.width(), k.height()),
@@ -93,18 +90,10 @@ export function startGame(container: HTMLElement, options: GameOptions = {}) {
         k.color(k.Color.fromHex(COLORS.TEXT)),
       ]);
 
-      // Starknet Logo - Centered and prominent
       k.add([
-        k.sprite("starknet-logo"),
+        k.text("STRKJUMP", { font: "arcade", size: 20 }),
         k.anchor("center"),
-        k.pos(k.center().x, k.center().y - 60),
-        k.scale(1.2), // Slightly larger for better visibility
-      ]);
-
-      k.add([
-        k.text("STARK JUMP", { font: "arcade", size: 20 }),
-        k.anchor("center"),
-        k.pos(k.center().x, k.center().y + 20),
+        k.pos(k.center().x, k.center().y - 40),
         k.color(k.Color.fromHex(COLORS.PLAYER)),
       ]);
 
@@ -112,7 +101,7 @@ export function startGame(container: HTMLElement, options: GameOptions = {}) {
         k.rect(160, 30),
         k.area(),
         k.anchor("center"),
-        k.pos(k.center().x, k.center().y + 60),
+        k.pos(k.center().x, k.center().y + 20),
         k.color(k.Color.fromHex(COLORS.UI_BG)),
         k.outline(2, k.Color.fromHex(COLORS.PLAYER)),
         "start-button",
@@ -131,14 +120,14 @@ export function startGame(container: HTMLElement, options: GameOptions = {}) {
           size: 8,
         }),
         k.anchor("center"),
-        k.pos(k.center().x, k.center().y + 110),
+        k.pos(k.center().x, k.center().y + 70),
         k.color(k.Color.fromHex(COLORS.TEXT)),
       ]);
 
       k.add([
         k.text("Player jumps automatically!", { font: "arcade", size: 8 }),
         k.anchor("center"),
-        k.pos(k.center().x, k.center().y + 130),
+        k.pos(k.center().x, k.center().y + 90),
         k.color(k.Color.fromHex(COLORS.PLAYER)),
       ]);
 

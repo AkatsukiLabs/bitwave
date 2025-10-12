@@ -2,7 +2,7 @@ import duckHunt from "@/assets/duck-hunt.jpg";
 import snakeCover from "@/assets/snake-cover.png";
 import asteroidsCover from "@/assets/asteroids-cover.png";
 import tetris from "@/assets/tetris.jpg";
-import starkjumpCover from "@/assets/starkjump-cover.png";
+import starkjumpLogo from "/graphics/starkjump.png";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { HelpCircle } from "lucide-react";
@@ -43,7 +43,7 @@ const games: Game[] = [
     id: "strkjump",
     title: "StrkJump",
     year: "(2024)",
-    image: starkjumpCover,
+    image: starkjumpLogo,
   },
 ];
 

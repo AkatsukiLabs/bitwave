@@ -11,3 +11,5 @@ export type { UseUpdateScoresReturn } from './useUpdateScores';
 
 export { useManageCoins } from './useManageCoins';
 export type { UseManageCoinsReturn } from './useManageCoins';
+
+export { useAddCoins } from './useAddCoins';

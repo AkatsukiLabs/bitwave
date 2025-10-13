@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Loader2 } from "lucide-react";
 import { useAegisAuth } from "@/hooks/useAegisAuth";
+import { usePlayerInitialization } from "@/hooks/usePlayerInitialization";
 import { toast } from "sonner";
 import bitwaveLogo from "@/assets/bitwave-logo.png";
 
@@ -28,10 +29,20 @@ const Auth = () => {
     clearError,
   } = useAegisAuth();
 
+  const { initializePlayer, isInitializing } = usePlayerInitialization();
+
   // Cargar wallet guardada al montar el componente (solo una vez)
   useEffect(() => {
     const initAuth = async () => {
       try {
+        // Check if we already have an auth token (coming from callback)
+        const existingToken = localStorage.getItem("bitwave_auth_token");
+        if (existingToken) {
+          console.log('✅ Auth token found, user already authenticated');
+          navigate("/home");
+          return;
+        }
+
         const hasWallet = await loadSavedWallet();
         if (hasWallet && isWalletConnected) {
           // Si ya hay una wallet conectada, ir directamente al home
@@ -42,7 +53,7 @@ const Auth = () => {
         console.error('Error initializing auth:', err);
       }
     };
-    
+
     // Solo ejecutar una vez al montar el componente
     initAuth();
   }, []); // Array vacío para ejecutar solo una vez
@@ -50,9 +61,9 @@ const Auth = () => {
   const handleGoogleAuth = async () => {
     try {
       clearError();
+      // loginWithGoogle will redirect to Google OAuth
+      // The callback will be handled by AuthCallback component
       await loginWithGoogle();
-      localStorage.setItem("bitwave_auth_token", "google_auth_token_" + Date.now());
-      navigate("/home");
     } catch (err) {
       console.error("Google auth failed:", err);
     }
@@ -61,9 +72,9 @@ const Auth = () => {
   const handleAppleAuth = async () => {
     try {
       clearError();
+      // loginWithApple will redirect to Apple OAuth
+      // The callback will be handled by AuthCallback component
       await loginWithApple();
-      localStorage.setItem("bitwave_auth_token", "apple_auth_token_" + Date.now());
-      navigate("/home");
     } catch (err) {
       console.error("Apple auth failed:", err);
     }
@@ -71,7 +82,7 @@ const Auth = () => {
 
   const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!email || !password) {
       alert("Please fill in all fields");
       return;
@@ -79,13 +90,19 @@ const Auth = () => {
 
     try {
       clearError();
-      
+
       if (isLogin) {
         await loginWithEmail(email, password);
         localStorage.setItem(
           "bitwave_auth_token",
           `email_auth_token_login_${Date.now()}`
         );
+
+        // Initialize player after login
+        const success = await initializePlayer();
+        if (success) {
+          navigate("/home");
+        }
       } else {
         // Registro
         await signUpWithEmail(email, password);
@@ -93,19 +110,17 @@ const Auth = () => {
           "bitwave_auth_token",
           `email_auth_token_signup_${Date.now()}`
         );
-        
+
         // Mostrar mensaje de éxito para registro
         toast.success("¡Registro exitoso!", {
           description: "Tu cuenta ha sido creada. Ahora puedes iniciar sesión.",
           duration: 4000,
         });
-        
+
         // Cambiar a modo login automáticamente
         setIsLogin(true);
         return; // No navegar inmediatamente, dejar que el usuario haga login
       }
-      
-      navigate("/home");
     } catch (err) {
       console.error("Email auth failed:", err);
     }
@@ -205,13 +220,13 @@ const Auth = () => {
 
           <Button
             type="submit"
-            disabled={isLoading || !sdkInitialized}
+            disabled={isLoading || isInitializing || !sdkInitialized}
             className="w-full h-12 bg-bitwave-orange hover:bg-bitwave-gold text-black font-medium rounded-lg transition-colors disabled:opacity-50"
           >
-            {isLoading ? (
+            {isLoading || isInitializing ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                {isLogin ? "Logging in..." : "Signing up..."}
+                {isInitializing ? "Initializing..." : isLogin ? "Logging in..." : "Signing up..."}
               </>
             ) : (
               isLogin ? "Login" : "Sign Up"

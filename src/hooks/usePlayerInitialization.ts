@@ -70,9 +70,9 @@ export function usePlayerInitialization(): UsePlayerInitializationReturn {
       if (!currentPlayer) {
         console.log(`🆕 [${timestamp}] Player not found - spawning new player...`);
 
-        // Spawn player with "none" as default name
-        // The contract accepts a string directly (felt252)
-        const txHash = await spawnPlayer(0); // Send 0 as placeholder for "none"
+        // Spawn player with "player" as default name (felt252)
+        // The contract accepts a string directly
+        const txHash = await spawnPlayer("player");
 
         if (!txHash) {
           throw new Error('Failed to spawn player on blockchain');
@@ -80,10 +80,8 @@ export function usePlayerInitialization(): UsePlayerInitializationReturn {
 
         console.log(`✅ [${timestamp}] Player spawned! TX: ${txHash}`);
 
-        // Wait for transaction to be processed
-        toast.loading('Creating player on blockchain...', {
-          duration: 3000
-        });
+        // Show loading toast with specific ID
+        const loadingToast = toast.loading('Creating player on blockchain...');
 
         // Wait for blockchain to process
         await new Promise(resolve => setTimeout(resolve, 5000));
@@ -91,6 +89,10 @@ export function usePlayerInitialization(): UsePlayerInitializationReturn {
         // Fetch the newly created player
         await refetchPlayer();
 
+        // Dismiss loading toast
+        toast.dismiss(loadingToast);
+
+        // Show success toast
         toast.success('Player created successfully!', {
           description: 'Welcome to Bitwave!'
         });

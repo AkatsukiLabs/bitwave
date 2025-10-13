@@ -1,10 +1,11 @@
 /**
  * Cavos & Dojo Network Configuration for Bitwave
- * Mainnet-only configuration for Dojo contract addresses
  */
 
-// Network configuration - mainnet only
-export const network = 'mainnet';
+// Network configuration from environment
+// Maps VITE_AEGIS_NETWORK (SN_MAINNET/SN_SEPOLIA) to lowercase (mainnet/sepolia)
+const aegisNetwork = import.meta.env.VITE_AEGIS_NETWORK || 'SN_MAINNET';
+export const network = aegisNetwork === 'SN_MAINNET' ? 'SN_MAINNET' : 'SN_SEPOLIA';
 
 // App ID from environment (frontend)
 export const appId = import.meta.env.VITE_AEGIS_APP_ID;

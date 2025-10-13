@@ -18,7 +18,7 @@ export const AEGIS_CONFIG = {
    * - 'SN_SEPOLIA': Testnet (recomendado para desarrollo)
    * - 'SN_MAINNET': Red principal (para producción)
    */
-  network: import.meta.env.VITE_AEGIS_NETWORK || 'SN_SEPOLIA',
+  network: import.meta.env.VITE_AEGIS_NETWORK || 'SN_MAINNET',
   
   /**
    * Nombre de tu aplicación

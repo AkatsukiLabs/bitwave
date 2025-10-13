@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useAegis } from '@cavos/aegis';
 import useGameStore from '@/store/gameStore';
 import { toast } from 'sonner';
+import { network } from '@/config/cavosConfig';
 
 /**
  * Hook for executing transactions on Dojo contracts using Aegis SDK
@@ -60,24 +61,37 @@ export function useCavosTransaction(): UseCavosTransactionReturn {
       // Normalize to array
       const callsArray = Array.isArray(calls) ? calls : [calls];
 
-      // Execute transaction using Aegis SDK
-      const result = await aegisAccount.execute(callsArray);
-
-      // Handle errors in response
-      if (result?.error) {
-        throw new Error(`Transaction failed: ${result.error}`);
+      // Aegis SDK execute method signature:
+      // execute(contractAddress: string, entrypoint: string, calldata?: any[])
+      // For single calls, we destructure the first call
+      if (callsArray.length > 1) {
+        throw new Error('Batch transactions not yet supported. Please execute one transaction at a time.');
       }
 
-      // Extract transaction hash
-      const txHash = result?.transaction_hash || result?.txHash || result;
+      const call = callsArray[0];
+
+      // Execute transaction using Aegis SDK
+      const result = await aegisAccount.execute(
+        call.contractAddress,
+        call.entrypoint,
+        call.calldata
+      );
+
+      // Extract transaction hash from TransactionResult
+      const txHash = result?.transactionHash;
 
       if (!txHash || typeof txHash !== 'string') {
         throw new Error('No valid transaction hash returned from the transaction.');
       }
 
+      // Determine explorer URL based on network
+      const explorerUrl = network === 'SN_MAINNET'
+        ? `https://voyager.online/tx/${txHash}`
+        : `https://sepolia.voyager.online/tx/${txHash}`;
+
       console.log('✅ Transaction successful:', {
         txHash: `${txHash.slice(0, 10)}...${txHash.slice(-8)}`,
-        explorerUrl: `https://sepolia.voyager.online/tx/${txHash}`
+        explorerUrl
       });
 
       // Add to pending transactions for tracking
@@ -88,7 +102,7 @@ export function useCavosTransaction(): UseCavosTransactionReturn {
         description: `View on explorer`,
         action: {
           label: 'View',
-          onClick: () => window.open(`https://sepolia.voyager.online/tx/${txHash}`, '_blank')
+          onClick: () => window.open(explorerUrl, '_blank')
         }
       });
 

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAegis } from '@cavos/aegis';
 import { usePlayerInitialization } from '@/hooks/usePlayerInitialization';
@@ -11,19 +11,18 @@ const AuthCallback = () => {
   const { aegisAccount } = useAegis();
   const { initializePlayer, isInitializing } = usePlayerInitialization();
   const [status, setStatus] = useState<string>('Procesando autenticación...');
+  const hasProcessed = useRef(false);
 
   useEffect(() => {
-    let isProcessing = false;
-
     const handleOAuthCallback = async () => {
-      // Prevent multiple executions
-      if (isProcessing) {
-        console.log('⚠️ OAuth callback already processing, skipping...');
+      // Prevent multiple executions (React StrictMode runs effects twice)
+      if (hasProcessed.current) {
+        console.log('⚠️ OAuth callback already processed, skipping...');
         return;
       }
 
       try {
-        isProcessing = true;
+        hasProcessed.current = true;
 
         console.log('=== OAUTH CALLBACK HANDLER ===');
         console.log('Current URL:', window.location.href);
@@ -73,11 +72,6 @@ const AuthCallback = () => {
 
     // Only run once when component mounts
     handleOAuthCallback();
-
-    // Cleanup to prevent re-runs
-    return () => {
-      isProcessing = false;
-    };
   }, []); // Empty deps - run only once
 
   return (

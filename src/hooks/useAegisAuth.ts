@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useAegis } from '@cavos/aegis';
 
 /**
@@ -17,7 +17,7 @@ export const useAegisAuth = () => {
   try {
     const aegisHook = useAegis();
     aegisAccount = aegisHook.aegisAccount;
-    isWalletConnected = aegisHook.isWalletConnected;
+    isWalletConnected = aegisHook.isConnected;
     sdkInitialized = true;
   } catch (err) {
     console.warn('Aegis SDK initialization error:', err);
@@ -66,19 +66,12 @@ export const useAegisAuth = () => {
       setError(null);
 
       const result = await aegisAccount.signIn(email, password);
-      
-      // Log completo de la respuesta del login
-      console.log('=== EMAIL LOGIN RESULT ===');
-      console.log('Full login response:', result);
-      console.log('Login success:', result?.success);
-      console.log('User data:', result?.data);
-      console.log('User ID:', result?.data?.user_id);
-      console.log('Email:', result?.data?.email);
-      console.log('Organization:', result?.data?.organization);
-      console.log('Wallet status:', result?.data?.walletStatus);
-      console.log('Auth data:', result?.data?.authData);
-      console.log('==========================');
-      
+
+      console.log('✅ Login successful:', {
+        email: result?.email,
+        wallet: result?.wallet?.address
+      });
+
       return { success: true };
     } catch (err) {
       console.error('Error logging in with email:', err);
@@ -103,32 +96,10 @@ export const useAegisAuth = () => {
       setError(null);
 
       const result = await aegisAccount.signUp(email, password);
-      
-      // Log completo de la respuesta del registro
-      console.log('=== EMAIL REGISTRATION RESULT ===');
-      console.log('Full registration response:', result);
-      console.log('Registration success:', result?.success);
-      console.log('User data:', result?.data);
-      console.log('User ID:', result?.data?.user_id);
-      console.log('Email:', result?.data?.email);
-      console.log('Organization:', result?.data?.organization);
-      console.log('Wallet status:', result?.data?.walletStatus);
-      console.log('Auth data:', result?.data?.authData);
-      console.log('==================================');
-      
-      // Si el registro fue exitoso, hacer login automáticamente
-      if (result && result.success) {
-        console.log('Registration successful, proceeding to login...');
-        
-        // Intentar hacer login automáticamente
-        try {
-          await aegisAccount.signIn(email, password);
-          console.log('Auto-login successful after registration');
-        } catch (loginErr) {
-          console.warn('Auto-login failed, user will need to login manually:', loginErr);
-          // No es un error crítico, el usuario puede hacer login manualmente
-        }
-      }
+
+      console.log('✅ Registration successful:', {
+        email: result?.email
+      });
       
       return { success: true };
     } catch (err) {
@@ -155,12 +126,7 @@ export const useAegisAuth = () => {
 
       const redirectUrl = 'http://localhost:8080/auth/callback';
       const authUrl = await aegisAccount.getAppleOAuthUrl(redirectUrl);
-      
-      console.log('=== APPLE SIGN-IN INITIATED ===');
-      console.log('Apple OAuth URL:', authUrl);
-      console.log('Redirect URL:', redirectUrl);
-      console.log('===============================');
-      
+
       // Redirigir directamente a Apple OAuth
       window.location.href = authUrl;
       
@@ -189,12 +155,7 @@ export const useAegisAuth = () => {
 
       const redirectUrl = 'http://localhost:8080/auth/callback';
       const authUrl = await aegisAccount.getGoogleOAuthUrl(redirectUrl);
-      
-      console.log('=== GOOGLE SIGN-IN INITIATED ===');
-      console.log('Google OAuth URL:', authUrl);
-      console.log('Redirect URL:', redirectUrl);
-      console.log('================================');
-      
+
       // Redirigir directamente a Google OAuth
       window.location.href = authUrl;
       

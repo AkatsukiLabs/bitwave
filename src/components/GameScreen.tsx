@@ -3,9 +3,14 @@ import { useEffect, useRef, useState } from 'react';
 interface GameScreenProps {
   playerName?: string;
   gamePath?: string;
+  onGameOver?: (score: number) => void | Promise<void>;
 }
 
-export function GameScreen({ playerName = "Player", gamePath = "duckhunt" }: GameScreenProps) {
+export function GameScreen({
+  playerName = "Player",
+  gamePath = "duckhunt",
+  onGameOver
+}: GameScreenProps) {
   const gameContainerRef = useRef<HTMLDivElement>(null);
   const gameInstanceRef = useRef<unknown>(null);
   const initializingRef = useRef(false);
@@ -23,7 +28,8 @@ export function GameScreen({ playerName = "Player", gamePath = "duckhunt" }: Gam
           initializingRef.current = true;
           const { startGame } = await import(`../game/${gamePath}/main.ts`);
           const gameInstance = startGame(gameContainerRef.current, {
-            playerName: playerName
+            playerName: playerName,
+            onGameOver: onGameOver
           });
 
           if (gameInstance) {
@@ -59,7 +65,7 @@ export function GameScreen({ playerName = "Player", gamePath = "duckhunt" }: Gam
       }
       initializingRef.current = false;
     };
-  }, [playerName, gamePath]);
+  }, [playerName, gamePath, onGameOver]);
 
   return (
     <div style={{

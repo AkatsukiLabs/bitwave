@@ -1,7 +1,6 @@
 import duckHunt from "@/assets/duck-hunt.jpg";
 import snakeCover from "@/assets/snake-cover.png";
 import asteroidsCover from "@/assets/asteroids-cover.png";
-import tetris from "@/assets/tetris.jpg";
 import starkjumpLogo from "/graphics/starkjump.png";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -32,12 +31,6 @@ const games: Game[] = [
     title: "Asteroids",
     year: "(1979)",
     image: asteroidsCover,
-  },
-  {
-    id: "tetris",
-    title: "Tetris",
-    year: "(1999)",
-    image: tetris,
   },
   {
     id: "strkjump",

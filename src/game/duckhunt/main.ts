@@ -7,6 +7,7 @@ import { createDuck } from "./duckFactory";
 
 interface GameOptions {
   playerName?: string;
+  onGameOver?: (score: number) => void | Promise<void>;
 }
 
 let gameInstance: any = null;
@@ -342,7 +343,15 @@ export function startGame(container: HTMLElement, options: GameOptions = {}) {
     });
 
     k.scene("game-over", () => {
+      const gameManager = createGameManager(k);
       gameManager.saveScore();
+
+      const finalScore = gameManager.currentScore;
+
+      // Call onGameOver callback if provided
+      if (options.onGameOver) {
+        options.onGameOver(finalScore);
+      }
 
       k.add([k.rect(k.width(), k.height()), k.color(0, 0, 0)]);
       k.add([
@@ -352,9 +361,8 @@ export function startGame(container: HTMLElement, options: GameOptions = {}) {
         k.color(255, 255, 255),
       ]);
 
-      const gameManager = createGameManager(k);
       k.add([
-        k.text(`Final Score: ${formatScore(gameManager.currentScore, 6)}`, { font: "nes", size: 6 }),
+        k.text(`Final Score: ${formatScore(finalScore, 6)}`, { font: "nes", size: 6 }),
         k.anchor("center"),
         k.pos(k.center().x, k.center().y + 10),
         k.color(COLORS.BEIGE),

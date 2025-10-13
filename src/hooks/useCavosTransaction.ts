@@ -27,7 +27,7 @@ export function useCavosTransaction(): UseCavosTransactionReturn {
   const [error, setError] = useState<string | null>(null);
 
   const { aegisAccount } = useAegis();
-  const { addPendingTransaction, removePendingTransaction } = useGameStore();
+  const { addPendingTransaction, removePendingTransaction, aegis } = useGameStore();
 
   /**
    * Execute a transaction or batch of transactions
@@ -39,16 +39,17 @@ export function useCavosTransaction(): UseCavosTransactionReturn {
     setError(null);
 
     try {
-      // Verify Aegis SDK is initialized
-      if (!aegisAccount) {
-        throw new Error('Aegis SDK not initialized. Please connect your wallet first.');
+      // Check authentication from Zustand (source of truth for auth state)
+      if (!aegis.isAuthenticated || !aegis.wallet?.address) {
+        throw new Error('Not authenticated. Please log in first.');
       }
 
-      // Verify wallet is connected
-      const walletAddress = aegisAccount.address;
-      if (!walletAddress) {
-        throw new Error('No wallet connected. Please connect your wallet to continue.');
+      // Verify Aegis SDK is initialized
+      if (!aegisAccount) {
+        throw new Error('Aegis SDK not initialized. Please refresh the page.');
       }
+
+      const walletAddress = aegis.wallet.address;
 
       console.log('📝 Executing transaction:', {
         walletAddress: `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}`,

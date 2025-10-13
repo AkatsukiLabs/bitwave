@@ -43,19 +43,52 @@ export function usePlayerInitialization(): UsePlayerInitializationReturn {
       setIsInitializing(true);
       setError(null);
 
-      // Verify wallet is connected
-      if (!aegisAccount?.address) {
+      // Get wallet data from Aegis SDK
+      // For social login, aegisAccount.address is null, but we can get the wallet from getSocialWallet()
+      let walletAddress: string | null = null;
+      let userData: any = {};
+      let walletData: any = {};
+
+      // Try to get social wallet first
+      try {
+        const socialWallet = aegisAccount.getSocialWallet();
+        if (socialWallet && socialWallet.wallet) {
+          walletAddress = socialWallet.wallet.address;
+          userData = {
+            email: socialWallet.email,
+            user_id: socialWallet.user_id,
+            username: socialWallet.email?.split('@')[0] || walletAddress.slice(0, 10),
+            organization: socialWallet.organization
+          };
+          walletData = {
+            address: socialWallet.wallet.address,
+            network: socialWallet.wallet.network
+          };
+          console.log(`✅ [${timestamp}] Social wallet detected:`, {
+            email: socialWallet.email,
+            address: walletAddress
+          });
+        }
+      } catch (err) {
+        console.warn('No social wallet found, trying regular address...');
+      }
+
+      // Fallback to regular aegisAccount.address (for in-app wallets)
+      if (!walletAddress && aegisAccount?.address) {
+        walletAddress = aegisAccount.address;
+        userData = { username: walletAddress.slice(0, 10) };
+        walletData = { address: walletAddress, network: 'mainnet' };
+      }
+
+      if (!walletAddress) {
         throw new Error('No wallet connected');
       }
 
       console.log(`🎮 [${timestamp}] INITIALIZING PLAYER`);
-      console.log(`   💳 Wallet: ${aegisAccount.address}`);
+      console.log(`   💳 Wallet: ${walletAddress}`);
 
       // Update store with Aegis auth state
-      setAegisAuth(
-        { username: aegisAccount.address.slice(0, 10) },
-        { address: aegisAccount.address, network: 'mainnet' }
-      );
+      setAegisAuth(userData, walletData);
 
       // Step 1: Try to fetch existing player from Torii
       console.log(`📡 [${timestamp}] Checking if player exists in blockchain...`);

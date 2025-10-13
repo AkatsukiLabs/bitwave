@@ -16,6 +16,7 @@ import { spawnPowerup } from "./powerupFactory";
 
 interface GameOptions {
   playerName?: string;
+  onGameOver?: (score: number) => void | Promise<void>;
 }
 
 interface GameInstance {
@@ -606,6 +607,11 @@ export function startGame(container: HTMLElement, options: GameOptions = {}) {
         );
         if (finalScore > savedHighScore) {
           k.setData("high-score", finalScore);
+        }
+
+        // Call onGameOver callback if provided
+        if (options.onGameOver) {
+          options.onGameOver(finalScore);
         }
 
         k.add([

@@ -93,6 +93,8 @@ const Auth = () => {
 
       if (isLogin) {
         await loginWithEmail(email, password);
+
+        // Save auth token
         localStorage.setItem(
           "bitwave_auth_token",
           `email_auth_token_login_${Date.now()}`

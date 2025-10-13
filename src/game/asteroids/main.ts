@@ -6,6 +6,7 @@ import { createShip } from "./shipFactory";
 
 interface GameOptions {
   playerName?: string;
+  onGameOver?: (score: number) => void | Promise<void>;
 }
 
 let gameInstance: any = null;
@@ -490,6 +491,11 @@ export function startGame(container: HTMLElement, options: GameOptions = {}) {
       const newHighScore = Math.max(finalScore, savedHighScore, currentHighScore);
       if (finalScore > savedHighScore) {
         k.setData("asteroids-high-score", finalScore);
+      }
+
+      // Call onGameOver callback if provided
+      if (options.onGameOver) {
+        options.onGameOver(finalScore);
       }
 
       k.add([

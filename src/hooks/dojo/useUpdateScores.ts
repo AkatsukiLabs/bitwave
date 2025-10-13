@@ -1,14 +1,13 @@
-import { useState } from 'react';
-import { useAegis } from '@cavos/aegis';
-import useGameStore from '@/store/gameStore';
+import { useCavosTransaction } from '../useCavosTransaction';
 import { getContractAddresses } from '@/config/cavosConfig';
 import { toast } from 'sonner';
+import useGameStore from '@/store/gameStore';
 
 /**
  * Hook to update player scores (highest and total)
  * Contracts:
- * - game::update_player_highest_score(minigameId: u32, highestScore: u64)
- * - game::update_player_total_score(minigameId: u32, score: u64)
+ * - game::update_player_highest_score(minigame_id: u32, highest_score: u32)
+ * - game::update_player_total_score(minigame_id: u32, score: u32)
  */
 
 export interface UseUpdateScoresReturn {
@@ -19,78 +18,77 @@ export interface UseUpdateScoresReturn {
 }
 
 export function useUpdateScores(): UseUpdateScoresReturn {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const { aegisAccount } = useAegis();
-  const { addPendingTransaction } = useGameStore();
+  const { executeTransaction, loading, error } = useCavosTransaction();
   const contractAddresses = getContractAddresses();
+  const { setMinigameScore, minigameScores } = useGameStore();
 
   const updateHighestScore = async (minigameId: number, highestScore: number): Promise<string | null> => {
     try {
-      setLoading(true);
-      setError(null);
+      console.log('🏆 Updating highest score:', { minigameId, highestScore });
 
-      if (!aegisAccount?.address) {
-        throw new Error('Wallet not connected');
+      // Check if this is actually a new high score
+      const currentScore = minigameScores[minigameId];
+      if (currentScore && highestScore <= currentScore.highest_score) {
+        console.log('⚠️ Score not higher than current high score, skipping transaction');
+        return null;
       }
 
-      console.log('🎯 Updating highest score:', { minigameId, highestScore });
-
-      const result = await aegisAccount.execute([{
+      const txHash = await executeTransaction({
         contractAddress: contractAddresses.game,
         entrypoint: 'update_player_highest_score',
         calldata: [minigameId.toString(), highestScore.toString()]
-      }]);
-
-      const txHash = result?.transaction_hash || result?.txHash;
-      if (!txHash) throw new Error('No transaction hash');
+      });
 
       console.log('✅ Highest score updated:', txHash);
-      addPendingTransaction(txHash);
-      toast.success('High score saved!');
+
+      // Update local store optimistically
+      setMinigameScore(minigameId, {
+        ...currentScore,
+        player_address: currentScore?.player_address || '',
+        minigame_id: minigameId,
+        highest_score: highestScore,
+        total_score: currentScore?.total_score || 0
+      });
+
+      toast.success('New high score!', {
+        description: `Score: ${highestScore}`
+      });
 
       return txHash;
     } catch (err) {
-      const msg = err instanceof Error ? err.message : 'Failed to update score';
-      setError(msg);
-      toast.error('Failed to update score', { description: msg });
+      const msg = err instanceof Error ? err.message : 'Failed to update highest score';
+      console.error('❌ Update highest score error:', err);
       return null;
-    } finally {
-      setLoading(false);
     }
   };
 
   const updateTotalScore = async (minigameId: number, score: number): Promise<string | null> => {
     try {
-      setLoading(true);
-      setError(null);
-
-      if (!aegisAccount?.address) {
-        throw new Error('Wallet not connected');
-      }
-
       console.log('📊 Updating total score:', { minigameId, score });
 
-      const result = await aegisAccount.execute([{
+      const txHash = await executeTransaction({
         contractAddress: contractAddresses.game,
         entrypoint: 'update_player_total_score',
         calldata: [minigameId.toString(), score.toString()]
-      }]);
-
-      const txHash = result?.transaction_hash || result?.txHash;
-      if (!txHash) throw new Error('No transaction hash');
+      });
 
       console.log('✅ Total score updated:', txHash);
-      addPendingTransaction(txHash);
+
+      // Update local store optimistically
+      const currentScore = minigameScores[minigameId];
+      setMinigameScore(minigameId, {
+        ...currentScore,
+        player_address: currentScore?.player_address || '',
+        minigame_id: minigameId,
+        highest_score: currentScore?.highest_score || 0,
+        total_score: (currentScore?.total_score || 0) + score
+      });
 
       return txHash;
     } catch (err) {
-      const msg = err instanceof Error ? err.message : 'Failed to update score';
-      setError(msg);
-      toast.error('Failed to update score', { description: msg });
+      const msg = err instanceof Error ? err.message : 'Failed to update total score';
+      console.error('❌ Update total score error:', err);
       return null;
-    } finally {
-      setLoading(false);
     }
   };
 

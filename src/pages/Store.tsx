@@ -3,6 +3,11 @@ import coinBag from "@/assets/coin-bag.png";
 import safeIcon from "@/assets/safe-icon.png";
 import { Button } from "@/components/ui/button";
 import { usePlayer } from "@/hooks/usePlayer";
+import { useAddCoins } from "@/hooks/dojo/useAddCoins";
+import { useAegisAuth } from "@/hooks/useAegisAuth";
+import { depositVesu } from "@/lib/utils";
+import { toast } from "sonner";
+import { useState } from "react";
 
 interface CoinPackage {
   id: string;
@@ -33,7 +38,59 @@ const coinPackages: CoinPackage[] = [
 ];
 
 const Store = () => {
-  const { player, loading } = usePlayer();
+  const { player, loading, refetch } = usePlayer();
+  const { addCoins, loading: addingCoins } = useAddCoins();
+  const { aegisAccount } = useAegisAuth();
+  const [buyingPackage, setBuyingPackage] = useState<string | null>(null);
+
+  const handleBuyCoins = async (pkg: CoinPackage) => {
+    await aegisAccount.recoverSession();
+    if (!aegisAccount) {
+      toast.error("Please connect your wallet first");
+      return;
+    }
+
+    setBuyingPackage(pkg.id);
+
+    try {
+      // Step 1: Create Vesu position by depositing WBTC
+      const btcAmount = parseFloat(pkg.price);
+      toast.loading("Creating Vesu position...", { id: "vesu-position" });
+
+      const vesuTxHash = await depositVesu(aegisAccount, btcAmount);
+
+      if (!vesuTxHash) {
+        throw new Error("Failed to create Vesu position");
+      }
+
+      toast.success("Vesu position created successfully!", {
+        id: "vesu-position",
+      });
+
+      // Step 2: Add coins to player balance
+      toast.loading("Adding coins to your balance...", { id: "add-coins" });
+
+      const coinTxHash = await addCoins(pkg.coins);
+
+      if (!coinTxHash) {
+        throw new Error("Failed to add coins to balance");
+      }
+
+      toast.success(`Successfully purchased ${pkg.coins} coins!`, {
+        id: "add-coins",
+      });
+
+      // Step 3: Refresh player data to show updated balance
+      await refetch();
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to purchase coins";
+      console.error("Buy coins error:", error);
+      toast.error(errorMessage);
+    } finally {
+      setBuyingPackage(null);
+    }
+  };
 
   return (
     <div className="max-w-md mx-auto">
@@ -64,9 +121,7 @@ const Store = () => {
                 />
               </div>
               <div>
-                <p className="text-foreground font-bold">
-                  {pkg.coins} coins
-                </p>
+                <p className="text-foreground font-bold">{pkg.coins} coins</p>
                 <div className="flex items-center gap-1">
                   <span className="text-xl font-bold text-foreground">
                     {pkg.price}
@@ -78,8 +133,10 @@ const Store = () => {
             <Button
               variant="bitwave"
               className="font-bold"
+              onClick={() => handleBuyCoins(pkg)}
+              disabled={buyingPackage === pkg.id || addingCoins || loading}
             >
-              Buy
+              {buyingPackage === pkg.id ? "Processing..." : "Buy"}
             </Button>
           </div>
         ))}

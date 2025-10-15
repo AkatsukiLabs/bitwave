@@ -12,15 +12,16 @@ export function cn(...inputs: ClassValue[]) {
 export async function depositVesu(account: AegisSDK, amount: number) {
   const approve = {
     contractAddress: WBTC_ADDRESS,
-    entrypoint: 'approve',
+    entrypoint: "approve",
     calldata: [account.address, formatAmount(amount, BTC_DECIMALS)],
-  }
+  };
 
   const deposit = {
     contractAddress: vWBTC_ADDRESS,
-    entrypoint: 'deposit',
+    entrypoint: "deposit",
     calldata: [formatAmount(amount, BTC_DECIMALS), account.address],
-  }
+  };
   const tx = await account.executeBatch([approve, deposit]);
+
   return tx.transactionHash;
 }

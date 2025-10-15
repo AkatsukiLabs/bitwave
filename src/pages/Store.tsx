@@ -8,6 +8,8 @@ import { useAegisAuth } from "@/hooks/useAegisAuth";
 import { depositVesu } from "@/lib/utils";
 import { toast } from "sonner";
 import { useState } from "react";
+import { WBTC_ADDRESS } from "@/config/contracts";
+import { BTC_DECIMALS } from "@/lib/constants";
 
 interface CoinPackage {
   id: string;
@@ -53,11 +55,28 @@ const Store = () => {
     setBuyingPackage(pkg.id);
 
     try {
+      // Check WBTC balance before attempting transaction
+      const balanceFormatted = await aegisAccount.getTokenBalance(
+        WBTC_ADDRESS,
+        BTC_DECIMALS
+      );
+
+      const balanceNum = parseFloat(balanceFormatted);
+      const priceNum = parseFloat(pkg.price);
+
+      console.log(`Balance (formatted): ${balanceFormatted} BTC, Price: ${pkg.price} BTC`);
+      console.log(`Balance (number): ${balanceNum}, Price (number): ${priceNum}`);
+
+      if (balanceNum < priceNum) {
+        toast.error(`Insufficient WBTC balance. You have ${balanceFormatted} BTC but need ${pkg.price} BTC`);
+        setBuyingPackage(null);
+        return;
+      }
+
       // Step 1: Create Vesu position by depositing WBTC
-      const btcAmount = parseFloat(pkg.price);
       toast.loading("Creating Vesu position...", { id: "vesu-position" });
 
-      const vesuTxHash = await depositVesu(aegisAccount, btcAmount);
+      const vesuTxHash = await depositVesu(aegisAccount, parseFloat(pkg.price));
 
       if (!vesuTxHash) {
         throw new Error("Failed to create Vesu position");

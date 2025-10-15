@@ -1,11 +1,10 @@
 import { ReactNode } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Home, Coins, User } from "lucide-react";
 import bitwaveLogo from "@/assets/bitwave-logo.png";
 import coinIcon from "@/assets/coin-icon.png";
-import starknetLogo from "@/assets/starknet-logo.png";
 import homeIcon from "@/assets/home-icon.png";
 import userIcon from "@/assets/user-icon.png";
+import { usePlayer } from "@/hooks/usePlayer";
 
 interface LayoutProps {
   children: ReactNode;
@@ -13,6 +12,7 @@ interface LayoutProps {
 
 const Layout = ({ children }: LayoutProps) => {
   const location = useLocation();
+  const { player, loading } = usePlayer();
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -22,11 +22,13 @@ const Layout = ({ children }: LayoutProps) => {
       <header className="flex items-center justify-between p-4 border-b border-border">
         <div className="w-16"></div> {/* Spacer for centering */}
         <img src={bitwaveLogo} alt="BITWAVE" className="h-8" />
-        <div className="flex items-center gap-2">
-          <span className="text-foreground text-lg font-mono">3</span>
+        <Link to="/store" className="flex items-center gap-2">
+          <span className="text-foreground text-lg font-mono">
+            {loading ? "..." : player?.coin_balance ?? 0}
+          </span>
           <img src={coinIcon} alt="Coin" className="w-8 h-8 coin-icon" />
           <span className="text-bitwave-orange text-xl font-bold">+</span>
-        </div>
+        </Link>
       </header>
 
       {/* Main content */}

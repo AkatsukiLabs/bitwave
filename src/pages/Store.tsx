@@ -1,46 +1,50 @@
 import coinIcon from "@/assets/coin-icon.png";
 import coinBag from "@/assets/coin-bag.png";
 import safeIcon from "@/assets/safe-icon.png";
-import starknetLogo from "@/assets/starknet-logo.png";
 import { Button } from "@/components/ui/button";
+import { usePlayer } from "@/hooks/usePlayer";
 
 interface CoinPackage {
   id: string;
   coins: number;
-  price: number;
+  price: string;
   icon: string;
 }
 
 const coinPackages: CoinPackage[] = [
   {
     id: "small",
-    coins: 5,
-    price: 50,
+    coins: 25,
+    price: "0.00001",
     icon: coinIcon,
   },
   {
     id: "medium",
     coins: 50,
-    price: 100,
+    price: "0.0001",
     icon: coinBag,
   },
   {
     id: "large",
     coins: 100,
-    price: 200,
+    price: "0.001",
     icon: safeIcon,
   },
 ];
 
 const Store = () => {
+  const { player, loading } = usePlayer();
+
   return (
     <div className="max-w-md mx-auto">
       {/* Balance Display */}
       <div className="text-center mb-8">
         <p className="text-muted-foreground mb-2">Your balance</p>
         <div className="flex items-center justify-center gap-2">
-          <span className="text-3xl font-bold text-foreground">500</span>
-          <img src={starknetLogo} alt="Starknet" className="w-8 h-8" />
+          <span className="text-3xl font-bold text-foreground">
+            {loading ? "..." : player?.coin_balance ?? 0}
+          </span>
+          <span className="text-xl text-muted-foreground">coins</span>
         </div>
       </div>
 
@@ -67,7 +71,7 @@ const Store = () => {
                   <span className="text-xl font-bold text-foreground">
                     {pkg.price}
                   </span>
-                  <img src={starknetLogo} alt="Starknet" className="w-5 h-5" />
+                  <span className="text-sm text-muted-foreground">BTC</span>
                 </div>
               </div>
             </div>

@@ -1,10 +1,13 @@
-import { ReactNode } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import bitwaveLogo from "@/assets/bitwave-logo.png";
 import coinIcon from "@/assets/coin-icon.png";
 import homeIcon from "@/assets/home-icon.png";
 import userIcon from "@/assets/user-icon.png";
 import { usePlayer } from "@/hooks/usePlayer";
+import { useAegis } from "@cavos/aegis";
+import { WBTC_ADDRESS } from "@/config/contracts";
+import { BTC_DECIMALS } from "@/lib/constants";
 
 interface LayoutProps {
   children: ReactNode;
@@ -13,14 +16,32 @@ interface LayoutProps {
 const Layout = ({ children }: LayoutProps) => {
   const location = useLocation();
   const { player, loading } = usePlayer();
+  const { aegisAccount } = useAegis();
+  const [balance, setBalance] = useState("0");
 
   const isActive = (path: string) => location.pathname === path;
+
+  useEffect(() => {
+    async function getBalance() {
+      if (aegisAccount.address) {
+        const balance = await aegisAccount.getTokenBalance(WBTC_ADDRESS, BTC_DECIMALS);
+        console.log(balance);
+        setBalance(balance);
+      }
+    }
+    getBalance();
+  }, [aegisAccount.address]);
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
       <header className="flex items-center justify-between p-4 border-b border-border">
-        <div className="w-16"></div> {/* Spacer for centering */}
+        <div className="flex items-center gap-2">
+          <span className="text-bitwave-orange text-lg font-mono font-bold">₿</span>
+          <span className="text-foreground text-lg font-mono">
+            {balance}
+          </span>
+        </div>
         <img src={bitwaveLogo} alt="BITWAVE" className="h-8" />
         <Link to="/store" className="flex items-center gap-2">
           <span className="text-foreground text-lg font-mono">

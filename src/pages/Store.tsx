@@ -7,9 +7,10 @@ import { useAddCoins } from "@/hooks/dojo/useAddCoins";
 import { useAegisAuth } from "@/hooks/useAegisAuth";
 import { depositVesu } from "@/lib/utils";
 import { toast } from "sonner";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { WBTC_ADDRESS } from "@/config/contracts";
 import { BTC_DECIMALS } from "@/lib/constants";
+import { formatAmount } from "cavos-service-sdk";
 
 interface CoinPackage {
   id: string;
@@ -44,6 +45,76 @@ const Store = () => {
   const { addCoins, loading: addingCoins } = useAddCoins();
   const { aegisAccount } = useAegisAuth();
   const [buyingPackage, setBuyingPackage] = useState<string | null>(null);
+  const [mintingWBTC, setMintingWBTC] = useState(false);
+  const [wbtcBalance, setWbtcBalance] = useState<string>("0");
+  const [loadingBalance, setLoadingBalance] = useState(true);
+
+  // Fetch WBTC balance
+  const fetchWbtcBalance = async () => {
+    if (!aegisAccount) return;
+
+    try {
+      setLoadingBalance(true);
+      const balance = await aegisAccount.getTokenBalance(
+        WBTC_ADDRESS,
+        BTC_DECIMALS
+      );
+      setWbtcBalance(balance);
+    } catch (error) {
+      console.error("Error fetching WBTC balance:", error);
+    } finally {
+      setLoadingBalance(false);
+    }
+  };
+
+  // Load balance on mount and when aegisAccount changes
+  useEffect(() => {
+    fetchWbtcBalance();
+  }, [aegisAccount]);
+
+  const handleMintWBTC = async () => {
+    await aegisAccount.recoverSession();
+    if (!aegisAccount) {
+      toast.error("Please connect your wallet first");
+      return;
+    }
+
+    setMintingWBTC(true);
+
+    try {
+      toast.loading("Minting WBTC...", { id: "mint-wbtc" });
+
+      // Call mint function on WBTC contract
+      // Minting 50 BTC worth of WBTC
+      const formattedAmount = await formatAmount(50, BTC_DECIMALS);
+
+      const result = await aegisAccount.execute(
+        WBTC_ADDRESS,
+        "mint",
+        [aegisAccount.address, formattedAmount]
+      );
+
+      if (!result?.transactionHash) {
+        throw new Error("Failed to mint WBTC");
+      }
+
+      toast.success("Successfully minted 50 WBTC!", {
+        id: "mint-wbtc",
+      });
+
+      console.log("WBTC minted:", result.transactionHash);
+
+      // Refresh WBTC balance
+      await fetchWbtcBalance();
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to mint WBTC";
+      console.error("Mint WBTC error:", error);
+      toast.error(errorMessage, { id: "mint-wbtc" });
+    } finally {
+      setMintingWBTC(false);
+    }
+  };
 
   const handleBuyCoins = async (pkg: CoinPackage) => {
     await aegisAccount.recoverSession();
@@ -99,8 +170,9 @@ const Store = () => {
         id: "add-coins",
       });
 
-      // Step 3: Refresh player data to show updated balance
+      // Step 3: Refresh player data and WBTC balance to show updated balances
       await refetch();
+      await fetchWbtcBalance();
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "Failed to purchase coins";
@@ -116,12 +188,35 @@ const Store = () => {
       {/* Balance Display */}
       <div className="text-center mb-8">
         <p className="text-muted-foreground mb-2">Your balance</p>
-        <div className="flex items-center justify-center gap-2">
+        <div className="flex items-center justify-center gap-2 mb-4">
           <span className="text-3xl font-bold text-foreground">
             {loading ? "..." : player?.coin_balance ?? 0}
           </span>
           <span className="text-xl text-muted-foreground">coins</span>
         </div>
+
+        {/* WBTC Balance */}
+        <div className="flex items-center justify-center gap-2">
+          <span className="text-lg font-semibold text-bitwave-orange">
+            {loadingBalance ? "..." : wbtcBalance}
+          </span>
+          <span className="text-sm text-muted-foreground">WBTC</span>
+        </div>
+      </div>
+
+      {/* WBTC Faucet Button */}
+      <div className="mb-6">
+        <Button
+          variant="bitwave"
+          className="w-full font-bold text-lg py-6"
+          onClick={handleMintWBTC}
+          disabled={mintingWBTC}
+        >
+          {mintingWBTC ? "Minting..." : "🚰 Get Free WBTC (Faucet)"}
+        </Button>
+        <p className="text-xs text-muted-foreground text-center mt-2">
+          Mint test WBTC to purchase coins
+        </p>
       </div>
 
       {/* Coin Packages */}

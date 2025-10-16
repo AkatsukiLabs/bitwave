@@ -11,6 +11,7 @@ import { useState, useEffect } from "react";
 import { WBTC_ADDRESS } from "@/config/contracts";
 import { BTC_DECIMALS } from "@/lib/constants";
 import { formatAmount } from "cavos-service-sdk";
+import useGameStore from "@/store/gameStore";
 
 interface CoinPackage {
   id: string;
@@ -44,6 +45,7 @@ const Store = () => {
   const { player, loading, refetch } = usePlayer();
   const { addCoins, loading: addingCoins } = useAddCoins();
   const { aegisAccount } = useAegisAuth();
+  const { aegis, triggerBalanceRefresh, balanceRefreshTrigger } = useGameStore();
   const [buyingPackage, setBuyingPackage] = useState<string | null>(null);
   const [mintingWBTC, setMintingWBTC] = useState(false);
   const [wbtcBalance, setWbtcBalance] = useState<string>("0");
@@ -51,7 +53,7 @@ const Store = () => {
 
   // Fetch WBTC balance
   const fetchWbtcBalance = async () => {
-    if (!aegisAccount) return;
+    if (!aegis.isAuthenticated || !aegis.wallet?.address || !aegisAccount) return;
 
     try {
       setLoadingBalance(true);
@@ -67,10 +69,10 @@ const Store = () => {
     }
   };
 
-  // Load balance on mount and when aegisAccount changes
+  // Load balance on mount, when wallet is connected, or when refresh is triggered
   useEffect(() => {
     fetchWbtcBalance();
-  }, [aegisAccount]);
+  }, [aegis.isAuthenticated, aegis.wallet?.address, aegisAccount, balanceRefreshTrigger]);
 
   const handleMintWBTC = async () => {
     await aegisAccount.recoverSession();
@@ -81,8 +83,15 @@ const Store = () => {
 
     setMintingWBTC(true);
 
+    // Store current balance for rollback
+    const previousBalance = wbtcBalance;
+
     try {
       toast.loading("Minting WBTC...", { id: "mint-wbtc" });
+
+      // Optimistic update: immediately update UI
+      const newBalance = (parseFloat(wbtcBalance) + 50).toString();
+      setWbtcBalance(newBalance);
 
       // Call mint function on WBTC contract
       // Minting 50 BTC worth of WBTC
@@ -98,15 +107,25 @@ const Store = () => {
         throw new Error("Failed to mint WBTC");
       }
 
+      console.log("WBTC minted:", result.transactionHash);
+
+      toast.loading("Confirming transaction...", {
+        id: "mint-wbtc",
+      });
+
+      // Wait for blockchain confirmation (5 seconds)
+      await new Promise(resolve => setTimeout(resolve, 5000));
+
       toast.success("Successfully minted 50 WBTC!", {
         id: "mint-wbtc",
       });
 
-      console.log("WBTC minted:", result.transactionHash);
-
-      // Refresh WBTC balance
-      await fetchWbtcBalance();
+      // Trigger balance refresh globally to sync with actual blockchain state
+      triggerBalanceRefresh();
     } catch (error) {
+      // Rollback optimistic update on error
+      setWbtcBalance(previousBalance);
+
       const errorMessage =
         error instanceof Error ? error.message : "Failed to mint WBTC";
       console.error("Mint WBTC error:", error);
@@ -124,6 +143,9 @@ const Store = () => {
     }
 
     setBuyingPackage(pkg.id);
+
+    // Store current balance for rollback
+    const previousWbtcBalance = wbtcBalance;
 
     try {
       // Check WBTC balance before attempting transaction
@@ -157,6 +179,10 @@ const Store = () => {
         id: "vesu-position",
       });
 
+      // Optimistic update: immediately update WBTC balance
+      const newWbtcBalance = (parseFloat(wbtcBalance) - parseFloat(pkg.price)).toString();
+      setWbtcBalance(newWbtcBalance);
+
       // Step 2: Add coins to player balance
       toast.loading("Adding coins to your balance...", { id: "add-coins" });
 
@@ -166,14 +192,24 @@ const Store = () => {
         throw new Error("Failed to add coins to balance");
       }
 
+      toast.loading("Confirming transaction...", {
+        id: "add-coins",
+      });
+
+      // Wait for blockchain confirmation (5 seconds)
+      await new Promise(resolve => setTimeout(resolve, 5000));
+
       toast.success(`Successfully purchased ${pkg.coins} coins!`, {
         id: "add-coins",
       });
 
-      // Step 3: Refresh player data and WBTC balance to show updated balances
+      // Step 3: Refresh player data and trigger global balance refresh
       await refetch();
-      await fetchWbtcBalance();
+      triggerBalanceRefresh();
     } catch (error) {
+      // Rollback optimistic updates on error
+      setWbtcBalance(previousWbtcBalance);
+
       const errorMessage =
         error instanceof Error ? error.message : "Failed to purchase coins";
       console.error("Buy coins error:", error);

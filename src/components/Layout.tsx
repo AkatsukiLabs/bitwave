@@ -8,6 +8,7 @@ import { usePlayer } from "@/hooks/usePlayer";
 import { useAegis } from "@cavos/aegis";
 import { WBTC_ADDRESS } from "@/config/contracts";
 import { BTC_DECIMALS } from "@/lib/constants";
+import useGameStore from "@/store/gameStore";
 
 interface LayoutProps {
   children: ReactNode;
@@ -17,6 +18,7 @@ const Layout = ({ children }: LayoutProps) => {
   const location = useLocation();
   const { player, loading } = usePlayer();
   const { aegisAccount } = useAegis();
+  const { balanceRefreshTrigger } = useGameStore();
   const [balance, setBalance] = useState("0");
 
   const isActive = (path: string) => location.pathname === path;
@@ -30,7 +32,7 @@ const Layout = ({ children }: LayoutProps) => {
       }
     }
     getBalance();
-  }, [aegisAccount.address]);
+  }, [aegisAccount.address, balanceRefreshTrigger]);
 
   return (
     <div className="min-h-screen bg-background flex flex-col">

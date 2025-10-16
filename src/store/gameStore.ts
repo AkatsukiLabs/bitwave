@@ -73,6 +73,10 @@ interface GameStore {
   // Leaderboard
   leaderboard: Player[];
   setLeaderboard: (players: Player[]) => void;
+
+  // Balance refresh trigger
+  balanceRefreshTrigger: number;
+  triggerBalanceRefresh: () => void;
 }
 
 // ==================== Initial States ====================
@@ -201,7 +205,16 @@ const useGameStore = create<GameStore>()(
       // ========== Leaderboard ==========
       leaderboard: [],
 
-      setLeaderboard: (players) => set({ leaderboard: players })
+      setLeaderboard: (players) => set({ leaderboard: players }),
+
+      // ========== Balance Refresh Trigger ==========
+      balanceRefreshTrigger: 0,
+
+      triggerBalanceRefresh: () => {
+        set((state) => ({
+          balanceRefreshTrigger: state.balanceRefreshTrigger + 1
+        }));
+      }
     }),
     {
       name: 'bitwave-game-storage',

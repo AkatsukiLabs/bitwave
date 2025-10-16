@@ -14,22 +14,32 @@ let gameInstance: any = null;
 let isDestroyed = false;
 
 export function startGame(container: HTMLElement, options: GameOptions = {}) {
+  // If the game was just destroyed, reset the flag and allow re-initialization
   if (isDestroyed) {
+    console.log('🎮 Resetting destroyed flag');
     isDestroyed = false;
     gameInstance = null;
   }
 
+  // If there's a valid existing instance, try to reuse it
   if (gameInstance && gameInstance !== 'INITIALIZING') {
     console.log('🎮 Game instance already exists, attaching to new container');
 
-    if (gameInstance.canvas && gameInstance.canvas.parentNode !== container) {
-      container.innerHTML = '';
-      container.appendChild(gameInstance.canvas);
+    // Make sure the canvas is attached to the new container
+    if (gameInstance.canvas) {
+      if (gameInstance.canvas.parentNode !== container) {
+        container.innerHTML = '';
+        container.appendChild(gameInstance.canvas);
+      }
+      return gameInstance;
+    } else {
+      // If there's no canvas, the instance is invalid - reset and recreate
+      console.log('🎮 Invalid game instance (no canvas), recreating...');
+      gameInstance = null;
     }
-
-    return gameInstance;
   }
 
+  // If already initializing, skip
   if (gameInstance === 'INITIALIZING') {
     console.log('🎮 Game is already initializing, skipping');
     return null;
@@ -119,6 +129,7 @@ export function startGame(container: HTMLElement, options: GameOptions = {}) {
     }
 
     k.scene("main-menu", () => {
+      k.setCursor("default");
       k.add([k.sprite("menu")]);
 
       startBackgroundMusic();
@@ -223,7 +234,12 @@ export function startGame(container: HTMLElement, options: GameOptions = {}) {
 
       const roundEndController = gameManager.onStateEnter("round-end", () => {
         if (gameManager.nbDucksShotInRound < 6) {
-          k.go("game-over");
+          // Save best score before game over
+          const bestScore = Number(k.getData("best-score") || 0);
+          if (bestScore < gameManager.currentScore) {
+            k.setData("best-score", gameManager.currentScore);
+          }
+          k.go("game-over", gameManager.currentScore);
           return;
         }
 
@@ -342,17 +358,13 @@ export function startGame(container: HTMLElement, options: GameOptions = {}) {
       });
     });
 
-    k.scene("game-over", () => {
-      const gameManager = createGameManager(k);
-      gameManager.saveScore();
-
-      const finalScore = gameManager.currentScore;
-
+    k.scene("game-over", (finalScore: number) => {
       // Call onGameOver callback if provided
       if (options.onGameOver) {
         options.onGameOver(finalScore);
       }
 
+      k.setCursor("default");
       k.add([k.rect(k.width(), k.height()), k.color(0, 0, 0)]);
       k.add([
         k.text("GAME OVER!", { font: "nes", size: 8 }),

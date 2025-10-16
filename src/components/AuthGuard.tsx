@@ -12,7 +12,6 @@ const AuthGuard = ({ children }: AuthGuardProps) => {
 
   useEffect(() => {
     // Check if user is authenticated
-    // For now, we'll use localStorage to simulate authentication state
     const authToken = localStorage.getItem("bitwave_auth_token");
     const isAuth = !!authToken;
 

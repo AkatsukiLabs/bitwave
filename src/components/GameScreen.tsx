@@ -16,6 +16,14 @@ export function GameScreen({
   const initializingRef = useRef(false);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Store onGameOver in a ref to avoid re-initializing the game when it changes
+  const onGameOverRef = useRef(onGameOver);
+
+  // Update the ref when onGameOver changes, but don't trigger re-initialization
+  useEffect(() => {
+    onGameOverRef.current = onGameOver;
+  }, [onGameOver]);
+
   useEffect(() => {
     const initializeGame = async () => {
       if (initializingRef.current || gameInstanceRef.current) {
@@ -29,7 +37,7 @@ export function GameScreen({
           const { startGame } = await import(`../game/${gamePath}/main.ts`);
           const gameInstance = startGame(gameContainerRef.current, {
             playerName: playerName,
-            onGameOver: onGameOver
+            onGameOver: (score: number) => onGameOverRef.current?.(score)
           });
 
           if (gameInstance) {
@@ -65,7 +73,7 @@ export function GameScreen({
       }
       initializingRef.current = false;
     };
-  }, [playerName, gamePath, onGameOver]);
+  }, [playerName, gamePath]); // Removed onGameOver from dependencies - it's stored in a ref
 
   return (
     <div style={{

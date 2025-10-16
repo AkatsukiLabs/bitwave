@@ -13,24 +13,34 @@ let gameInstance: any = null;
 let isDestroyed = false;
 
 export function startGame(container: HTMLElement, options: GameOptions = {}) {
+  // If the game was just destroyed, reset the flag and allow re-initialization
   if (isDestroyed) {
+    console.log('🎮 Resetting destroyed flag');
     isDestroyed = false;
     gameInstance = null;
   }
 
+  // If there's a valid existing instance, try to reuse it
   if (gameInstance && gameInstance !== 'INITIALIZING') {
     console.log('🎮 Game instance already exists, attaching to new container');
 
-    if (gameInstance.canvas && gameInstance.canvas.parentNode !== container) {
-      container.innerHTML = '';
-      container.appendChild(gameInstance.canvas);
+    // Make sure the canvas is attached to the new container
+    if (gameInstance.canvas) {
+      if (gameInstance.canvas.parentNode !== container) {
+        container.innerHTML = '';
+        container.appendChild(gameInstance.canvas);
+      }
+      return gameInstance;
+    } else {
+      // If there's no canvas, the instance is invalid - reset and recreate
+      console.log('🎮 Invalid game instance (no canvas), recreating...');
+      gameInstance = null;
     }
-
-    return gameInstance;
   }
 
+  // If already initializing, skip
   if (gameInstance === 'INITIALIZING') {
-    console.log('🎮 Game is already initializing, skipping');
+    console.log('�� Game is already initializing, skipping');
     return null;
   }
 
@@ -475,7 +485,8 @@ export function startGame(container: HTMLElement, options: GameOptions = {}) {
       k.onSceneLeave(() => {
         gameManager.asteroids.forEach((a: any) => k.destroy(a));
         gameManager.bullets.forEach((b: any) => k.destroy(b));
-        gameManager.resetGameState();
+        // Don't reset game state here - it will be reset when returning to main menu
+        // Resetting here causes the score to be 0 when transitioning to game-over
       });
     });
 
@@ -557,6 +568,7 @@ export function startGame(container: HTMLElement, options: GameOptions = {}) {
               console.warn('Error during cleanup:', error);
             }
           }
+
           window.location.href = "/home";
         }, 300);
       });

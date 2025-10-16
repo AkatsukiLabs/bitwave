@@ -47,10 +47,27 @@ export function usePlayer(): UsePlayerReturn {
    * Fetch player data from Torii
    */
   const fetchPlayer = useCallback(async () => {
-    const walletAddress = aegisAccount?.address;
+    // Get wallet address (try social wallet first, then regular address)
+    let walletAddress: string | null = null;
+
+    if (aegisAccount) {
+      try {
+        const socialWallet = aegisAccount.getSocialWallet();
+        if (socialWallet?.wallet?.address) {
+          walletAddress = socialWallet.wallet.address;
+        }
+      } catch (err) {
+        // No social wallet
+      }
+
+      if (!walletAddress && aegisAccount.address) {
+        walletAddress = aegisAccount.address;
+      }
+    }
 
     if (!walletAddress) {
       console.log('⚠️ No wallet address available, skipping player fetch');
+      setLoading(false);
       return;
     }
 

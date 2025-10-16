@@ -101,7 +101,7 @@ const Profile = () => {
           )}
         </div>
         <p className="text-sm text-muted-foreground">
-          Balance: {walletBalance} ETH
+          Balance: {walletBalance} BTC
         </p>
       </div>
 

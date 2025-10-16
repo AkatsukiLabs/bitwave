@@ -22,7 +22,7 @@ export function useSpawnPlayer(): UseSpawnPlayerReturn {
 
   const { aegisAccount } = useAegis();
   const contractAddresses = getContractAddresses();
-  const { aegis, addPendingTransaction, removePendingTransaction } = useGameStore();
+  const { addPendingTransaction, removePendingTransaction } = useGameStore();
 
   const spawnPlayer = async (playerName: string): Promise<string | null> => {
     try {
@@ -31,15 +31,31 @@ export function useSpawnPlayer(): UseSpawnPlayerReturn {
 
       console.log('🚀 Spawning player:', playerName);
 
-      // Check authentication
-      if (!aegis.isAuthenticated || !aegis.wallet?.address) {
-        throw new Error('Not authenticated. Please log in first.');
-      }
-
       // Check if aegisAccount is available
       if (!aegisAccount) {
         throw new Error('Aegis account not initialized.');
       }
+
+      // Verify we have wallet address (either from social wallet or in-app wallet)
+      let walletAddress: string | null = null;
+      try {
+        const socialWallet = aegisAccount.getSocialWallet();
+        if (socialWallet?.wallet?.address) {
+          walletAddress = socialWallet.wallet.address;
+        }
+      } catch (err) {
+        // No social wallet, try regular address
+      }
+
+      if (!walletAddress && aegisAccount.address) {
+        walletAddress = aegisAccount.address;
+      }
+
+      if (!walletAddress) {
+        throw new Error('No wallet address found. Please log in first.');
+      }
+
+      console.log('📍 Using wallet address:', walletAddress);
 
       // Execute spawn_player transaction
       const result = await aegisAccount.execute(
